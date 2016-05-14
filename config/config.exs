@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :chas, key: :value
+#     config :data_morph, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:chas, :key)
+#     Application.get_env(:data_morph, :key)
 #
 # Or configure a 3rd-party app:
 #

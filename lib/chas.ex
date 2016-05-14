@@ -1,2 +1,0 @@
-defmodule Chas do
-end

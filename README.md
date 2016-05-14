@@ -1,6 +1,6 @@
-# Chas
+# DataMorph
 
-Create Helpful Awesome Structs from data.
+Create Elixir structs from data.
 
 ## Installation
 

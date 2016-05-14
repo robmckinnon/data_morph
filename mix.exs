@@ -1,8 +1,8 @@
-defmodule Chas.Mixfile do
+defmodule DataMorph.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :chas,
+    [app: :data_morph,
      version: "0.0.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -15,6 +15,8 @@ defmodule Chas.Mixfile do
   end
 
   defp deps do
-    []
+    [
+      {:mix_test_watch, "~> 0.2", only: :dev},
+    ]
   end
 end
