@@ -16,6 +16,7 @@ defmodule DataMorph.Mixfile do
 
   defp deps do
     [
+      {:csv, "~> 1.4.0"},
       {:mix_test_watch, "~> 0.2", only: :dev},
     ]
   end

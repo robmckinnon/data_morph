@@ -1,2 +1,4 @@
-%{"fs": {:hex, :fs, "0.9.2"},
-  "mix_test_watch": {:hex, :mix_test_watch, "0.2.6"}}
+%{"csv": {:hex, :csv, "1.4.0"},
+  "fs": {:hex, :fs, "0.9.2"},
+  "mix_test_watch": {:hex, :mix_test_watch, "0.2.6"},
+  "parallel_stream": {:hex, :parallel_stream, "1.0.3"}}
