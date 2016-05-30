@@ -19,4 +19,17 @@ defmodule DataMorphStructTest do
     assert Map.to_list(template) == [__struct__: Baz.Foo, baz: nil, boom: nil]
   end
 
+  test "redefining struct definition only adds keys to new structs" do
+    Code.eval_string("defmodule Example, do: defstruct [:original_attribute]")
+    { original, _ } = Code.eval_string("%Example{ original_attribute: 'hi' }")
+    assert Map.has_key? original, :original_attribute
+    assert !Map.has_key? original, :new_attribute
+
+    Code.eval_string("defmodule Example, do: defstruct [:original_attribute, :new_attribute]")
+    { updated, _ } = Code.eval_string("%Example{ new_attribute: 'bye' }")
+    assert Map.has_key? updated, :original_attribute
+    assert Map.has_key? updated, :new_attribute
+    assert !Map.has_key? original, :new_attribute
+  end
+
 end
