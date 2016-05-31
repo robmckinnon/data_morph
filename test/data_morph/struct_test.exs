@@ -13,10 +13,16 @@ defmodule DataMorphStructTest do
     assert Map.to_list(template) == [__struct__: Bar.Foo, baz: nil, boom: nil]
   end
 
-  test "defmodulestruct/2 macro called second time with different fields does not redefine struct" do
+  test "defmodulestruct/2 macro called second time with additional new field redefines struct" do
     DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom])
     {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom, :bish])
-    assert Map.to_list(template) == [__struct__: Baz.Foo, baz: nil, boom: nil]
+    assert Map.to_list(template) == [__struct__: Baz.Foo, baz: nil, bish: nil, boom: nil]
+  end
+
+  test "defmodulestruct/2 macro called second time without original fields redefines struct leaving original keys in struct" do
+    DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom])
+    {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Baz.Foo, [:bish])
+    assert Map.to_list(template) == [__struct__: Baz.Foo, baz: nil, bish: nil, boom: nil]
   end
 
   test "redefining struct definition only adds keys to new structs" do

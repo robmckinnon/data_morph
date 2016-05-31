@@ -6,7 +6,8 @@ defmodule DataMorph do
   @doc ~S"""
   Defines a struct and returns list of structs created from TSV string.
 
-  When called a second time with different fields it does not redefine struct.
+  When called a second time with different fields it redefines struct,
+  setting fields to be the union of the old and new fields.
 
   ## Example
 

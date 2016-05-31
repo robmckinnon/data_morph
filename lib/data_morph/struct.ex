@@ -4,7 +4,8 @@ defmodule DataMorph.Struct do
   @doc ~S"""
   Defines a struct from given alias and list of fields.
 
-  When called a second time with different fields it does not redefine struct.
+  When called a second time with additional new fields it redefines struct,
+  setting fields to be the union of the old and new fields.
 
   ## Example
 
@@ -13,16 +14,26 @@ defmodule DataMorph.Struct do
       iex> %Foo.Bar{baz: "zy", boom: "boom"}
       %Foo.Bar{baz: "zy", boom: "boom"}
       iex> DataMorph.Struct.defmodulestruct(Foo.Bar, [:bish, :bash])
-      {:module, Foo.Bar, _, %Foo.Bar{baz: nil, boom: nil}}
+      {:module, Foo.Bar, _, %Foo.Bar{bash: nil, baz: nil, bish: nil, boom: nil}}
       iex> %Foo.Bar{bish: "zy", bash: "boom"}
-      ** (CompileError) iex:93: unknown key :bish for struct Foo.Bar
+      %Foo.Bar{bash: "boom", baz: nil, bish: "zy", boom: nil}
 
   """
   defmacro defmodulestruct kind, fields do
     quote do
       value = try do
-        template = struct(unquote(kind))
-        {:module, unquote(kind), nil, template}
+        template = struct unquote(kind)
+        existing_fields = template |> Map.to_list |> Keyword.keys |> MapSet.new
+        new_fields = MapSet.new unquote(fields)
+
+        if MapSet.equal? existing_fields, new_fields do
+          {:module, unquote(kind), nil, template}
+        else
+          union = MapSet.union(existing_fields, new_fields)
+          defmodule Module.concat([ unquote(kind) ]) do
+            defstruct MapSet.to_list(union)
+          end
+        end
       rescue
         UndefinedFunctionError ->
           defmodule Module.concat([ unquote(kind) ]) do
@@ -36,7 +47,8 @@ defmodule DataMorph.Struct do
   @doc ~S"""
   Defines a struct and returns list of structs created from list of maps.
 
-  When called a second time with different fields it does not redefine struct.
+  When called a second time with different fields it redefines struct,
+  setting fields to be the union of the old and new fields.
 
   ## Example
 
