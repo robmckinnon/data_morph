@@ -45,29 +45,44 @@ defmodule DataMorph.Struct do
   end
 
   @doc ~S"""
-  Defines a struct and returns list of structs created from list of maps.
+  Defines a struct and returns structs created from maps.
 
-  When called a second time with different fields it redefines struct,
-  setting fields to be the union of the old and new fields.
+  Redefines struct when called again with same namespace and name but different
+  fields, sets struct fields to be the union of the old and new fields.
 
-  ## Example
+  ## Examples
 
-      iex> structs = DataMorph.Struct.from_list_of_maps OpenRegister, "country", [
-      iex> %{"name" => "New Zealand", "iso" => "nz"},
-      iex> %{"name" => "United Kingdom", "iso" => "gb"}
+  Defines a struct and returns stream of structs created from stream of maps.
+
+      iex> [
+      iex>   %{"name" => "New Zealand", "iso" => "nz"},
+      iex>   %{"name" => "United Kingdom", "iso" => "gb"}
+      iex> ]
+      iex> |> Stream.map &(&1)
+      iex> |> DataMorph.Struct.from_maps(OpenRegister, "country")
+      [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
+      %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+
+  Defines a struct and returns stream of structs created from list of maps.
+
+      iex> DataMorph.Struct.from_maps OpenRegister, "country", [
+      iex>   %{"name" => "New Zealand", "iso" => "nz"},
+      iex>   %{"name" => "United Kingdom", "iso" => "gb"}
       iex> ]
       [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+
   """
-  def from_list_of_maps namespace, name, list do
+  def from_maps stream, namespace, name do
     kind = DataMorph.Module.camelize_concat(namespace, name)
-    fields = extract_fields(list)
+    fields = extract_fields(stream)
     defmodulestruct kind, fields
-    Enum.map list, &(Maptu.struct!(kind, &1))
+    Stream.map stream, &(Maptu.struct!(kind, &1))
   end
 
-  defp extract_fields list do
-    list
+  defp extract_fields stream do
+    stream
+      |> Enum.take(1)
       |> List.first
       |> Map.keys
       |> Enum.map(&(String.to_atom &1))
