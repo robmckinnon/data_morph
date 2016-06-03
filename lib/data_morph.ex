@@ -41,4 +41,12 @@ defmodule DataMorph do
     DataMorph.Tsv.to_stream_of_maps(tsv)
     |> DataMorph.Struct.from_maps(namespace, name)
   end
+
+  @doc ~S"""
+  Defines a struct and returns stream of structs created from CSV.
+  """
+  def structs_from_csv csv, namespace, name do
+    DataMorph.Csv.to_stream_of_maps(csv)
+    |> DataMorph.Struct.from_maps(namespace, name)
+  end
 end

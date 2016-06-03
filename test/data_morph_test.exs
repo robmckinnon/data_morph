@@ -1,6 +1,7 @@
 defmodule DataMorphTest do
   use ExUnit.Case, async: false
   doctest DataMorph.Tsv
+  doctest DataMorph.Csv
   doctest DataMorph.Module
 
   setup do
