@@ -36,7 +36,7 @@ defmodule DataMorph.Csv do
   def to_stream_of_maps(csv) when is_binary(csv) do
     csv
       |> String.split("\n")
-      |> Stream.map(&(&1))
+      |> ParallelStream.map(&(&1))
       |> to_stream_of_maps
   end
   def to_stream_of_maps(csv) do

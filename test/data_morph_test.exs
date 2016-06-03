@@ -37,7 +37,6 @@ defmodule DataMorphTest do
               ]
               |> DataMorph.Struct.from_maps(OpenRegister, "country")
 
-    assert %Stream{} = structs
     assert_structs "OpenRegister.Country", structs
   end
 

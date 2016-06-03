@@ -77,15 +77,15 @@ defmodule DataMorph.Struct do
     kind = DataMorph.Module.camelize_concat(namespace, name)
     fields = extract_fields(stream)
     defmodulestruct kind, fields
-    Stream.map stream, &(Maptu.struct!(kind, &1))
+    ParallelStream.map stream, &(Maptu.struct!(kind, &1))
   end
 
   defp extract_fields stream do
     stream
-      |> Enum.take(1)
-      |> List.first
-      |> Map.keys
-      |> Enum.map(&(String.to_atom &1))
+    |> Enum.take(1)
+    |> List.first
+    |> Map.keys
+    |> Enum.map(&(String.to_atom &1))
   end
 
 end
