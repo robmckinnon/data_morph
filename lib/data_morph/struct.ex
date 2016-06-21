@@ -82,10 +82,9 @@ defmodule DataMorph.Struct do
 
   defp extract_fields stream do
     stream
-    |> Enum.take(1)
-    |> List.first
+    |> Enum.at(0)
     |> Map.keys
-    |> Enum.map(&(String.to_atom &1))
+    |> Enum.map(&String.to_atom/1)
   end
 
 end
