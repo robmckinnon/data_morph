@@ -17,7 +17,6 @@ defmodule DataMorph.Mixfile do
   defp deps do
     [
       {:csv, "~> 1.4.0"},
-      {:maptu, ">= 0.0.0"},
       {:mix_test_watch, "~> 0.2", only: :dev},
       {:parallel_stream, "~> 1.0.3"},
     ]

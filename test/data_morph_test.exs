@@ -5,14 +5,14 @@ defmodule DataMorphTest do
   doctest DataMorph.Module
 
   setup do
-    stream = "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
+    stream = "name\tISO code\nNew Zealand\tnz\nUnited Kingdom\tgb"
              |> String.split("\n")
              |> Stream.map(&(&1))
     {:ok, [tsv: stream]}
   end
 
   def assert_struct item, expected_kind, expected_iso, expected_name do
-    [__struct__: kind, iso: iso, name: name] = Map.to_list item
+    [__struct__: kind, iso_code: iso, name: name] = Map.to_list item
     assert Atom.to_string(kind) == "Elixir.#{expected_kind}"
     assert iso == expected_iso
     assert name == expected_name
@@ -32,8 +32,8 @@ defmodule DataMorphTest do
 
   test "from_maps/3 defines struct and returns stream of maps converted to structs" do
     structs = [
-                %{"name" => "New Zealand", "iso" => "nz"},
-                %{"name" => "United Kingdom", "iso" => "gb"}
+                %{"name" => "New Zealand", "ISO code" => "nz"},
+                %{"name" => "United Kingdom", "ISO code" => "gb"}
               ]
               |> DataMorph.Struct.from_maps(OpenRegister, "country")
 
