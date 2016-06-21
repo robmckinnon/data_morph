@@ -55,37 +55,52 @@ defmodule DataMorph.Struct do
   Defines a struct and returns stream of structs created from stream of maps.
 
       iex> [
-      iex>   %{"name" => "New Zealand", "iso" => "nz"},
-      iex>   %{"name" => "United Kingdom", "iso" => "gb"}
+      iex>   %{"name" => "New Zealand", "ISO code" => "nz"},
+      iex>   %{"name" => "United Kingdom", "ISO code" => "gb"}
       iex> ]
       iex> |> Stream.map &(&1)
       iex> |> DataMorph.Struct.from_maps(OpenRegister, "country")
-      [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
-      %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+      [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
+      %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   Defines a struct and returns stream of structs created from list of maps.
 
       iex> DataMorph.Struct.from_maps OpenRegister, "country", [
-      iex>   %{"name" => "New Zealand", "iso" => "nz"},
-      iex>   %{"name" => "United Kingdom", "iso" => "gb"}
+      iex>   %{"name" => "New Zealand", "ISO code" => "nz"},
+      iex>   %{"name" => "United Kingdom", "ISO code" => "gb"}
       iex> ]
-      [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
-      %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+      [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
+      %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   """
   def from_maps stream, namespace, name do
     kind = DataMorph.Module.camelize_concat(namespace, name)
-    fields = extract_fields(stream)
-    defmodulestruct kind, fields
-    ParallelStream.map stream, &(Maptu.struct!(kind, &1))
+    fields = stream |> extract_fields
+    defmodulestruct kind, Map.values(fields)
+    stream
+    |> ParallelStream.map(&(&1 |> convert_keys(fields)))
+    |> ParallelStream.map(&(struct(kind, &1)))
+  end
+
+  defp convert_keys map, fields do
+    for {key, val} <- map, into: %{}, do: {fields[key], val}
+  end
+
+  defp normalize string do
+    string
+    |> String.downcase
+    |> String.replace(~r"\W", " ")
+    |> String.replace(~r"  +", " ")
+    |> String.strip()
+    |> String.replace(" ", "_")
+    |> String.to_atom
   end
 
   defp extract_fields stream do
     stream
-    |> Enum.take(1)
-    |> List.first
+    |> Enum.at(0)
     |> Map.keys
-    |> Enum.map(&(String.to_atom &1))
+    |> Map.new(fn x -> {x, normalize(x)} end)
   end
 
 end
