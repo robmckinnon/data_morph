@@ -14,6 +14,9 @@ defmodule DataMorph.Module do
       iex> DataMorph.Module.camelize_concat("open_register", "iso_country")
       OpenRegister.IsoCountry
 
+      iex> DataMorph.Module.camelize_concat("open_register", :iso_country)
+      OpenRegister.IsoCountry
+
       iex> DataMorph.Module.camelize_concat("", "country")
       Country
 
@@ -49,18 +52,18 @@ defmodule DataMorph.Module do
   """
   def camelize_concat(list) do
     list
-      |> camelize
-      |> Module.concat
+    |> camelize
+    |> Module.concat
   end
 
   defp camelize([]), do: []
   defp camelize([head | tail]), do: [camelize(head) | camelize(tail)]
   defp camelize(nil), do: nil
   defp camelize(""), do: nil
-  defp camelize(atom) when is_atom(atom), do: atom
+  defp camelize(atom) when is_atom(atom), do: atom |> Atom.to_string |> camelize
   defp camelize(string) do
     string
-      |> String.replace("-", "_")
-      |> Macro.camelize
+    |> String.replace("-", "_")
+    |> Macro.camelize
   end
 end

@@ -26,8 +26,8 @@ defmodule DataMorphTest do
   end
 
   test "creates structs from TSV", context do
-    structs = DataMorph.structs_from_tsv(context[:tsv], OpenRegister, "country")
-    assert_structs "OpenRegister.Country", structs
+    structs = DataMorph.structs_from_tsv(context[:tsv], OpenRegister, :iso_country)
+    assert_structs "OpenRegister.IsoCountry", structs
   end
 
   test "from_maps/3 defines struct and returns stream of maps converted to structs" do
