@@ -20,7 +20,7 @@ defmodule DataMorphTest do
 
   def assert_structs kind, stream do
     list = Enum.to_list stream
-    assert Enum.count(stream) == 2
+    assert Enum.count(list) == 2
     List.first(list) |> assert_struct(kind, "nz", "New Zealand")
     List.last(list)  |> assert_struct(kind, "gb", "United Kingdom")
   end
