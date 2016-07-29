@@ -1,5 +1,7 @@
 defmodule DataMorph do
-  @moduledoc false
+  @moduledoc ~S"""
+  Create Elixir structs from data.
+  """
 
   require DataMorph.Struct
 
@@ -18,6 +20,8 @@ defmodule DataMorph do
       [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
 
+  ## Example
+
   Define a struct and return stream of structs created from a TSV stream.
 
       iex> "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
@@ -27,10 +31,13 @@ defmodule DataMorph do
       [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
 
+  ## Example
+
   Add new fields to struct when called again with different TSV.
 
       iex> "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
       iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
+      iex>
       iex> "name\tacronym\nNew Zealand\tNZ\nUnited Kingdom\tUK"
       iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
       [%OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},

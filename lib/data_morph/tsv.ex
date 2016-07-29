@@ -1,8 +1,10 @@
 defmodule DataMorph.Tsv do
-  @moduledoc false
+  @moduledoc ~S"""
+  Functions for converting TSV stream or string, to stream of maps.
+  """
 
   @doc ~S"""
-  Parse tsv to list of maps.
+  Parse TSV to stream of maps.
 
   ## Examples
 

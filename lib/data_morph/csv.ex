@@ -1,8 +1,10 @@
 defmodule DataMorph.Csv do
-  @moduledoc false
+  @moduledoc ~S"""
+  Functions for converting CSV stream or string, to stream of maps.
+  """
 
   @doc ~S"""
-  Parse Csv to list of maps.
+  Parse CSV to stream of maps.
 
   ## Examples
 

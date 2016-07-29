@@ -1,5 +1,7 @@
 defmodule DataMorph.Struct do
-  @moduledoc false
+  @moduledoc ~S"""
+  Functions for defining and creating structs from maps.
+  """
 
   @doc ~S"""
   Defines a struct from given alias and list of fields.
