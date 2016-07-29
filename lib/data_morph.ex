@@ -1,15 +1,6 @@
 defmodule DataMorph do
   @moduledoc ~S"""
   Create Elixir structs from data.
-  """
-
-  require DataMorph.Struct
-
-  @doc ~S"""
-  Defines a struct and returns stream of structs created from TSV.
-
-  Redefines struct when called again with same namespace and name but different
-  fields, sets struct fields to be the union of the old and new fields.
 
   ## Example
 
@@ -19,6 +10,16 @@ defmodule DataMorph do
       iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
       [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+
+  """
+
+  require DataMorph.Struct
+
+  @doc ~S"""
+  Defines a struct and returns stream of structs created from TSV.
+
+  Redefines struct when called again with same namespace and name but different
+  fields, sets struct fields to be the union of the old and new fields.
 
   ## Example
 
@@ -43,6 +44,11 @@ defmodule DataMorph do
       [%OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
       %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}]
 
+  ## Parmeters
+
+   - tsv: TSV stream or string
+   - namespace: string or atom to form first part of struct alias
+   - name: string or atom to form last part of struct alias
   """
   def structs_from_tsv tsv, namespace, name do
     DataMorph.Tsv.to_stream_of_maps(tsv)
@@ -51,6 +57,12 @@ defmodule DataMorph do
 
   @doc ~S"""
   Defines a struct and returns stream of structs created from CSV.
+
+  ## Parmeters
+
+   - csv: CSV stream or string
+   - namespace: string or atom to form first part of struct alias
+   - name: string or atom to form last part of struct alias
   """
   def structs_from_csv csv, namespace, name do
     DataMorph.Csv.to_stream_of_maps(csv)
