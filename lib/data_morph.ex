@@ -60,9 +60,9 @@ defmodule DataMorph do
 
   ## Parmeters
 
-   - csv: CSV stream or string
-   - namespace: string or atom to form first part of struct alias
-   - name: string or atom to form last part of struct alias
+   - `csv`: CSV stream or string
+   - `namespace`: string or atom to form first part of struct alias
+   - `name`: string or atom to form last part of struct alias
   """
   def structs_from_csv csv, namespace, name do
     DataMorph.Csv.to_stream_of_maps(csv)
