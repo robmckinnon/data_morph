@@ -5,7 +5,9 @@ defmodule DataMorphTest do
   doctest DataMorph.Module
 
   setup do
-    stream = "name\tISO code\nNew Zealand\tnz\nUnited Kingdom\tgb"
+    stream = "name\tISO code\n" <>
+             "New Zealand\tnz\n" <>
+             "United Kingdom\tgb"
              |> String.split("\n")
              |> Stream.map(&(&1))
     {:ok, [tsv: stream]}

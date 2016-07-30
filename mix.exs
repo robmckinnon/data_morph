@@ -32,7 +32,7 @@ defmodule DataMorph.Mixfile do
       {:ex_doc, "~> 0.12", only: :docs},
       {:inch_ex, "~> 0.2", only: :docs},
       # Test dependencies
-      {:mix_test_watch, "~> 0.2", only: :test},
+      {:mix_test_watch, "~> 0.2", only: :dev},
     ]
   end
 

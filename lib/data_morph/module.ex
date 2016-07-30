@@ -1,6 +1,7 @@
 defmodule DataMorph.Module do
   @moduledoc ~S"""
-  Functions for camelizing lists of aliases to create struct alias.
+  Contains `camelize_concat/1` and `camelize_concat/2` functions that camelize
+  and concatenate aliases and return a new alias.
   """
 
   @doc ~S"""

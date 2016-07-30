@@ -1,6 +1,7 @@
 defmodule DataMorph.Struct do
   @moduledoc ~S"""
-  Functions for defining and creating structs from maps.
+  Contains `from_maps/3` function that defines a struct and return structs
+  created from maps, and `defmodulestruct/2` macro to define a struct.
   """
 
   @doc ~S"""
@@ -9,7 +10,7 @@ defmodule DataMorph.Struct do
   When called a second time with additional new fields it redefines struct,
   setting fields to be the union of the old and new fields.
 
-  ## Example
+  ## Examples
 
       iex> DataMorph.Struct.defmodulestruct(Foo.Bar, [:baz, :boom])
       {:module, Foo.Bar, _, %Foo.Bar{baz: nil, boom: nil}}
@@ -57,20 +58,23 @@ defmodule DataMorph.Struct do
   Defines a struct and returns stream of structs created from stream of maps.
 
       iex> [
-      iex>   %{"name" => "New Zealand", "ISO code" => "nz"},
-      iex>   %{"name" => "United Kingdom", "ISO code" => "gb"}
-      iex> ]
-      iex> |> Stream.map &(&1)
-      iex> |> DataMorph.Struct.from_maps(OpenRegister, "country")
+      ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
+      ...>   %{"name" => "United Kingdom", "ISO code" => "gb"}
+      ...> ] \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.Struct.from_maps(OpenRegister, "country") \
+      ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   Defines a struct and returns stream of structs created from list of maps.
 
-      iex> DataMorph.Struct.from_maps OpenRegister, "country", [
-      iex>   %{"name" => "New Zealand", "ISO code" => "nz"},
-      iex>   %{"name" => "United Kingdom", "ISO code" => "gb"}
-      iex> ]
+      iex> [
+      ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
+      ...>   %{"name" => "United Kingdom", "ISO code" => "gb"}
+      ...> ] \
+      ...> |> DataMorph.Struct.from_maps(OpenRegister, "country") \
+      ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
@@ -80,8 +84,8 @@ defmodule DataMorph.Struct do
     fields = stream |> extract_fields
     defmodulestruct kind, Map.values(fields)
     stream
-    |> ParallelStream.map(&(&1 |> convert_keys(fields)))
-    |> ParallelStream.map(&(struct(kind, &1)))
+    |> ParallelStream.map(& &1 |> convert_keys(fields))
+    |> ParallelStream.map(& struct(kind, &1))
   end
 
   defp convert_keys map, fields do

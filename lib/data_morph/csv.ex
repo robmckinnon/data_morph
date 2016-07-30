@@ -4,20 +4,22 @@ defmodule DataMorph.Csv do
   """
 
   @doc ~S"""
-  Parse CSV to stream of maps.
+  Parse `csv` string or stream to stream of maps.
 
   ## Examples
 
   Convert blank string to empty stream.
-      iex> DataMorph.Csv.to_stream_of_maps("")
+      iex> DataMorph.Csv.to_stream_of_maps("") \
       iex> |> Enum.to_list
       []
 
   Map a string of lines separated by \n to a stream of maps with
   header row as keys:
-      iex> string = "name,iso\nNew Zealand,nz\nUnited Kingdom,gb"
-      iex> DataMorph.Csv.to_stream_of_maps(string)
-      iex> |> Enum.to_list
+      iex> "name,iso\n" <>
+      ...> "New Zealand,nz\n" <>
+      ...> "United Kingdom,gb" \
+      ...> |> DataMorph.Csv.to_stream_of_maps \
+      ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
         %{"name" => "United Kingdom", "iso" => "gb"}
@@ -25,10 +27,13 @@ defmodule DataMorph.Csv do
 
   Map a stream of lines separated by \n to a stream of maps with
   header row as keys:
-      iex> csv = "name,iso\nNew Zealand,nz\nUnited Kingdom,gb"
-      iex> stream = csv |> String.split("\n") |> Stream.map(&(&1))
-      iex> DataMorph.Csv.to_stream_of_maps(stream)
-      iex> |> Enum.to_list
+      iex> "name,iso\n" <>
+      ...> "New Zealand,nz\n" <>
+      ...> "United Kingdom,gb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.Csv.to_stream_of_maps \
+      ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
         %{"name" => "United Kingdom", "iso" => "gb"}

@@ -4,51 +4,73 @@ defmodule DataMorph do
 
   ## Example
 
-  Define a struct and return stream of structs created from a TSV string.
+  Define a struct and return stream of structs created from a `tsv` string, a
+  `namespace` atom and `name` string.
 
-      iex> "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
-      iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
-      [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
-      %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
+      ...> |> Enum.to_list
+      [
+        %OpenRegister.Country{iso: "nz", name: "New Zealand"},
+        %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
+      ]
 
   """
 
   require DataMorph.Struct
 
   @doc ~S"""
-  Defines a struct and returns stream of structs created from TSV.
+  Defines a struct and returns stream of structs created from `tsv` string or
+  stream, and a `namespace` and `name`.
 
-  Redefines struct when called again with same namespace and name but different
-  fields, sets struct fields to be the union of the old and new fields.
-
-  ## Example
-
-  Define a struct and return stream of structs created from a TSV stream.
-
-      iex> "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
-      iex> |> String.split("\n")
-      iex> |> Stream.map(&(&1))
-      iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
-      [%OpenRegister.Country{iso: "nz", name: "New Zealand"},
-      %OpenRegister.Country{iso: "gb", name: "United Kingdom"}]
+  Redefines struct when called again with same `namespace` and `name` but
+  different fields. It sets struct fields to be the union of the old and new
+  fields.
 
   ## Example
 
-  Add new fields to struct when called again with different TSV.
+  Define a struct and return stream of structs created from a `tsv` stream, and
+  a `namespace` string and `name` atom.
 
-      iex> "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
-      iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
-      iex>
-      iex> "name\tacronym\nNew Zealand\tNZ\nUnited Kingdom\tUK"
-      iex> |> DataMorph.structs_from_tsv(OpenRegister, "country")
-      [%OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
-      %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}]
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.structs_from_tsv("open-register", :iso_country) \
+      ...> |> Enum.to_list
+      [
+        %OpenRegister.IsoCountry{iso: "nz", name: "New Zealand"},
+        %OpenRegister.IsoCountry{iso: "gb", name: "United Kingdom"}
+      ]
+
+  ## Example
+
+  Add additional new fields to struct when called again with different `tsv`.
+
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
+      ...> |> Enum.to_list
+      ...>
+      ...> "name\tacronym\n" <>
+      ...> "New Zealand\tNZ\n" <>
+      ...> "United Kingdom\tUK" \
+      ...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
+      ...> |> Enum.to_list
+      [
+        %OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
+        %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
+      ]
 
   ## Parmeters
 
-   - tsv: TSV stream or string
-   - namespace: string or atom to form first part of struct alias
-   - name: string or atom to form last part of struct alias
+   - `tsv`: TSV stream or string
+   - `namespace`: string or atom to form first part of struct alias
+   - `name`: string or atom to form last part of struct alias
   """
   def structs_from_tsv tsv, namespace, name do
     DataMorph.Tsv.to_stream_of_maps(tsv)
@@ -56,7 +78,10 @@ defmodule DataMorph do
   end
 
   @doc ~S"""
-  Defines a struct and returns stream of structs created from CSV.
+  Defines a struct and returns stream of structs created from `csv` string or
+  stream, and a `namespace` and `name`.
+
+  See `structs_from_tsv/3` for examples.
 
   ## Parmeters
 
