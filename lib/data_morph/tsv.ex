@@ -1,21 +1,25 @@
 defmodule DataMorph.Tsv do
-  @moduledoc false
+  @moduledoc ~S"""
+  Functions for converting TSV stream or string, to stream of maps.
+  """
 
   @doc ~S"""
-  Parse tsv to list of maps.
+  Parse `tsv` string or stream to stream of maps.
 
   ## Examples
 
   Convert blank string to empty stream.
-      iex> DataMorph.Tsv.to_stream_of_maps("")
+      iex> DataMorph.Tsv.to_stream_of_maps("") \
       iex> |> Enum.to_list
       []
 
   Map a string of lines separated by \n to a stream of maps with
   header row as keys:
-      iex> string = "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
-      iex> DataMorph.Tsv.to_stream_of_maps(string)
-      iex> |> Enum.to_list
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.Tsv.to_stream_of_maps \
+      ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
         %{"name" => "United Kingdom", "iso" => "gb"}
@@ -23,10 +27,13 @@ defmodule DataMorph.Tsv do
 
   Map a stream of lines separated by \n to a stream of maps with
   header row as keys:
-      iex> tsv = "name\tiso\nNew Zealand\tnz\nUnited Kingdom\tgb"
-      iex> stream = tsv |> String.split("\n") |> Stream.map(&(&1))
-      iex> DataMorph.Tsv.to_stream_of_maps(stream)
-      iex> |> Enum.to_list
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.Tsv.to_stream_of_maps \
+      ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
         %{"name" => "United Kingdom", "iso" => "gb"}
