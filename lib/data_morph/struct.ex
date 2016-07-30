@@ -5,7 +5,7 @@ defmodule DataMorph.Struct do
   """
 
   @doc ~S"""
-  Defines a struct from given alias and list of fields.
+  Defines a struct from given `kind` alias and list of `fields`.
 
   When called a second time with additional new fields it redefines struct,
   setting fields to be the union of the old and new fields.
@@ -14,11 +14,11 @@ defmodule DataMorph.Struct do
 
       iex> DataMorph.Struct.defmodulestruct(Foo.Bar, [:baz, :boom])
       {:module, Foo.Bar, _, %Foo.Bar{baz: nil, boom: nil}}
-      iex> %Foo.Bar{baz: "zy", boom: "boom"}
+      ...> %Foo.Bar{baz: "zy", boom: "boom"}
       %Foo.Bar{baz: "zy", boom: "boom"}
-      iex> DataMorph.Struct.defmodulestruct(Foo.Bar, [:bish, :bash])
+      ...> DataMorph.Struct.defmodulestruct(Foo.Bar, [:bish, :bash])
       {:module, Foo.Bar, _, %Foo.Bar{bash: nil, baz: nil, bish: nil, boom: nil}}
-      iex> %Foo.Bar{bish: "zy", bash: "boom"}
+      ...> %Foo.Bar{bish: "zy", bash: "boom"}
       %Foo.Bar{bash: "boom", baz: nil, bish: "zy", boom: nil}
 
   """
@@ -48,14 +48,15 @@ defmodule DataMorph.Struct do
   end
 
   @doc ~S"""
-  Defines a struct and returns structs created from maps.
+  Defines a struct and returns structs created from `maps` list or stream, and
+  a `namespace` and `name`.
 
   Redefines struct when called again with same namespace and name but different
   fields, sets struct fields to be the union of the old and new fields.
 
   ## Examples
 
-  Defines a struct and returns stream of structs created from stream of maps.
+  Defines a struct and returns stream of structs created from stream of `maps`.
 
       iex> [
       ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
@@ -67,23 +68,23 @@ defmodule DataMorph.Struct do
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
-  Defines a struct and returns stream of structs created from list of maps.
+  Defines a struct and returns stream of structs created from list of `maps`.
 
       iex> [
       ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
       ...>   %{"name" => "United Kingdom", "ISO code" => "gb"}
       ...> ] \
-      ...> |> DataMorph.Struct.from_maps(OpenRegister, "country") \
+      ...> |> DataMorph.Struct.from_maps("open-register", Country) \
       ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   """
-  def from_maps stream, namespace, name do
+  def from_maps maps, namespace, name do
     kind = DataMorph.Module.camelize_concat(namespace, name)
-    fields = stream |> extract_fields
+    fields = maps |> extract_fields
     defmodulestruct kind, Map.values(fields)
-    stream
+    maps
     |> ParallelStream.map(& &1 |> convert_keys(fields))
     |> ParallelStream.map(& struct(kind, &1))
   end

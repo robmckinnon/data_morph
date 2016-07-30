@@ -5,9 +5,10 @@ defmodule DataMorph.Module do
   """
 
   @doc ~S"""
-  Camelizes and concatenates two aliases and returns a new alias.
+  Camelizes and concatenates `namespace` and `name` aliases and
+  returns new alias.
 
-  String aliases are camelized. Atom aliases are left unchanged.
+  Both string and atom aliases are camelized.
 
   ## Examples
 
@@ -41,9 +42,10 @@ defmodule DataMorph.Module do
   end
 
   @doc ~S"""
-  Camelizes and concatenates a list of aliases and returns a new alias.
+  Camelizes and concatenates a list of `aliases` and returns new
+  alias.
 
-  String aliases are camelized. Atom aliases are left unchanged.
+  Both string and atom `aliases` are camelized.
 
   ## Examples
 
@@ -53,8 +55,8 @@ defmodule DataMorph.Module do
       Political
 
   """
-  def camelize_concat(list) do
-    list
+  def camelize_concat(aliases) do
+    aliases
     |> camelize
     |> Module.concat
   end
