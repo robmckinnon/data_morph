@@ -5,6 +5,26 @@ Create Elixir structs from data.
 [![Build Status](https://api.travis-ci.org/robmckinnon/data_morph.svg)](https://travis-ci.org/robmckinnon/data_morph)
 [![Inline docs](http://inch-ci.org/github/robmckinnon/data_morph.svg)](http://inch-ci.org/github/robmckinnon/data_morph)
 
+## Documentation
+
+You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/data_morph/DataMorph.html).
+
+## Installation
+
+Add
+```elixir
+{:data_morph, "~> 0.0.1"}
+```
+to your deps in `mix.exs` like so:
+
+```elixir
+defp deps do
+  [
+    {:data_morph, "~> 0.0.1"}
+  ]
+end
+```
+
 ## Usage examples
 
 Define a struct and return stream of structs created from a `tsv` string, a `namespace` atom and `name` string.
@@ -56,7 +76,3 @@ iex> "name\tiso\n" <>
   %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
 ]
 ```
-
-## Installation
-
-Not on Hex yet.

@@ -38,7 +38,7 @@ defmodule DataMorph.Mixfile do
 
   defp description do
     """
-    Create Elixir structs from data
+    Create Elixir structs from data.
     """
   end
 
