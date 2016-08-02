@@ -26,7 +26,12 @@ defmodule DataMorph.Struct do
     quote do
       value = try do
         template = struct unquote(kind)
-        existing_fields = template |> Map.to_list |> Keyword.keys |> MapSet.new
+        existing_fields = template
+                          |> Map.to_list
+                          |> Keyword.keys
+                          |> MapSet.new
+                          |> MapSet.delete(:__struct__)
+
         new_fields = MapSet.new unquote(fields)
 
         if MapSet.equal? existing_fields, new_fields do
