@@ -48,7 +48,7 @@ defmodule DataMorph.Mixfile do
       licenses: ["MIT"],
       links: %{github: "https://github.com/robmckinnon/data_morph" },
       files: ~w(lib) ++
-        ~w(LICENSE mix.exs README.md),
+        ~w(LICENSE mix.exs README.md CHANGELOG.md),
     ]
   end
 end
