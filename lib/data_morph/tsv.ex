@@ -9,7 +9,7 @@ defmodule DataMorph.Tsv do
   ## Examples
 
   Convert blank string to empty stream.
-      iex> DataMorph.Tsv.to_stream_of_maps("") \
+      iex> DataMorph.Tsv.to_stream_of_maps("")
       iex> |> Enum.to_list
       []
 
@@ -17,8 +17,8 @@ defmodule DataMorph.Tsv do
   header row as keys:
       iex> "name\tiso\n" <>
       ...> "New Zealand\tnz\n" <>
-      ...> "United Kingdom\tgb" \
-      ...> |> DataMorph.Tsv.to_stream_of_maps \
+      ...> "United Kingdom\tgb"
+      ...> |> DataMorph.Tsv.to_stream_of_maps
       ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
@@ -29,10 +29,10 @@ defmodule DataMorph.Tsv do
   header row as keys:
       iex> "name\tiso\n" <>
       ...> "New Zealand\tnz\n" <>
-      ...> "United Kingdom\tgb" \
-      ...> |> String.split("\n") \
-      ...> |> Stream.map(& &1) \
-      ...> |> DataMorph.Tsv.to_stream_of_maps \
+      ...> "United Kingdom\tgb"
+      ...> |> String.split("\n")
+      ...> |> Stream.map(& &1)
+      ...> |> DataMorph.Tsv.to_stream_of_maps
       ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
