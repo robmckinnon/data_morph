@@ -4,6 +4,7 @@ Create Elixir structs from data.
 
 [![Build Status](https://api.travis-ci.org/robmckinnon/data_morph.svg)](https://travis-ci.org/robmckinnon/data_morph)
 [![Inline docs](http://inch-ci.org/github/robmckinnon/data_morph.svg)](http://inch-ci.org/github/robmckinnon/data_morph)
+[![Hex.pm](https://img.shields.io/hexpm/v/data_morph.svg)](https://hex.pm/packages/data_morph)
 
 ## Documentation
 
@@ -13,14 +14,14 @@ You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/da
 
 Add
 ```elixir
-{:data_morph, "~> 0.0.1"}
+{:data_morph, "~> 0.0.2"}
 ```
 to your deps in `mix.exs` like so:
 
 ```elixir
 defp deps do
   [
-    {:data_morph, "~> 0.0.1"}
+    {:data_morph, "~> 0.0.2"}
   ]
 end
 ```

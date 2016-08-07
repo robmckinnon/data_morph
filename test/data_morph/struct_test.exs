@@ -9,8 +9,17 @@ defmodule DataMorphStructTest do
   end
 
   test "defmodulestruct/2 macro defines struct with correct template" do
-    {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Bar.Foo, [:baz, :boom])
+    {:module, _, binary, template} = DataMorph.Struct.defmodulestruct(Bar.Foo, [:baz, :boom])
     assert Map.to_list(template) == [__struct__: Bar.Foo, baz: nil, boom: nil]
+    assert is_binary(binary)
+  end
+
+  test "defmodulestruct/2 macro called second time with same field keys doesn't redefine struct" do
+    DataMorph.Struct.defmodulestruct(Foo.Bar.Foo, [:baz, :boom])
+
+    {:module, _, binary, template} = DataMorph.Struct.defmodulestruct(Foo.Bar.Foo, [:baz, :boom])
+    assert Map.to_list(template) == [__struct__: Foo.Bar.Foo, baz: nil, boom: nil]
+    assert binary == nil
   end
 
   test "defmodulestruct/2 macro called second time with additional new field redefines struct" do
@@ -20,9 +29,9 @@ defmodule DataMorphStructTest do
   end
 
   test "defmodulestruct/2 macro called second time without original fields redefines struct leaving original keys in struct" do
-    DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom])
-    {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Baz.Foo, [:bish])
-    assert Map.to_list(template) == [__struct__: Baz.Foo, baz: nil, bish: nil, boom: nil]
+    DataMorph.Struct.defmodulestruct(Foo.Baz.Foo, [:baz, :boom])
+    {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Foo.Baz.Foo, [:bish])
+    assert Map.to_list(template) == [__struct__: Foo.Baz.Foo, baz: nil, bish: nil, boom: nil]
   end
 
   test "redefining struct definition only adds keys to new structs" do

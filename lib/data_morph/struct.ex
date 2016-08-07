@@ -24,26 +24,23 @@ defmodule DataMorph.Struct do
   """
   defmacro defmodulestruct kind, fields do
     quote do
-      value = try do
-        template = struct unquote(kind)
-        existing_fields = template |> Map.to_list |> Keyword.keys |> MapSet.new
-        new_fields = MapSet.new unquote(fields)
-
-        if MapSet.equal? existing_fields, new_fields do
-          {:module, unquote(kind), nil, template}
-        else
-          union = MapSet.union(existing_fields, new_fields)
-          defmodule Module.concat([ unquote(kind) ]) do
-            defstruct MapSet.to_list(union)
-          end
-        end
-      rescue
-        UndefinedFunctionError ->
-          defmodule Module.concat([ unquote(kind) ]) do
-            defstruct unquote(fields)
-          end
+      module = unquote(kind)
+      fields = unquote(fields)
+      fields_changeset = try do
+                           existing_fields = (struct(module) |> Map.keys) -- [:__struct__]
+                           unless existing_fields === fields do
+                             MapSet.new(existing_fields)
+                             |> MapSet.union(MapSet.new(fields))
+                             |> MapSet.to_list
+                           end
+                         rescue
+                           UndefinedFunctionError -> fields
+                         end
+      if fields_changeset do
+        defmodule Module.concat([module]), do: defstruct fields_changeset
+      else
+        {:module, module, nil, struct(module)}
       end
-      value
     end
   end
 
