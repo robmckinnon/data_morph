@@ -26,24 +26,20 @@ defmodule DataMorph.Struct do
     quote do
       module = unquote(kind)
       fields = unquote(fields)
-      try do
-        template = struct module
-        existing_fields = template
-                          |> Map.to_list
-                          |> Keyword.keys
-                          |> MapSet.new
-                          |> MapSet.delete(:__struct__)
-        new_fields = MapSet.new fields
-
-        if MapSet.equal? existing_fields, new_fields do
-          {:module, module, nil, template}
-        else
-          fields_union = MapSet.union(existing_fields, new_fields) |> MapSet.to_list
-          defmodule Module.concat([ module ]), do: defstruct fields_union
-        end
-      rescue
-        UndefinedFunctionError ->
-          defmodule Module.concat([ module ]), do: defstruct fields
+      fields_changeset = try do
+                           existing_fields = (struct(module) |> Map.keys) -- [:__struct__]
+                           unless existing_fields === fields do
+                             MapSet.new(existing_fields)
+                             |> MapSet.union(MapSet.new(fields))
+                             |> MapSet.to_list
+                           end
+                         rescue
+                           UndefinedFunctionError -> fields
+                         end
+      if fields_changeset do
+        defmodule Module.concat([module]), do: defstruct fields_changeset
+      else
+        {:module, module, nil, struct(module)}
       end
     end
   end
