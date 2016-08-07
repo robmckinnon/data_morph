@@ -9,7 +9,7 @@ defmodule DataMorph.Csv do
   ## Examples
 
   Convert blank string to empty stream.
-      iex> DataMorph.Csv.to_stream_of_maps("") \
+      iex> DataMorph.Csv.to_stream_of_maps("")
       iex> |> Enum.to_list
       []
 
@@ -17,8 +17,8 @@ defmodule DataMorph.Csv do
   header row as keys:
       iex> "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
-      ...> "United Kingdom,gb" \
-      ...> |> DataMorph.Csv.to_stream_of_maps \
+      ...> "United Kingdom,gb"
+      ...> |> DataMorph.Csv.to_stream_of_maps
       ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
@@ -29,10 +29,10 @@ defmodule DataMorph.Csv do
   header row as keys:
       iex> "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
-      ...> "United Kingdom,gb" \
-      ...> |> String.split("\n") \
-      ...> |> Stream.map(& &1) \
-      ...> |> DataMorph.Csv.to_stream_of_maps \
+      ...> "United Kingdom,gb"
+      ...> |> String.split("\n")
+      ...> |> Stream.map(& &1)
+      ...> |> DataMorph.Csv.to_stream_of_maps
       ...> |> Enum.to_list
       [
         %{"name" => "New Zealand", "iso" => "nz"},
