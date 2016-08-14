@@ -22,6 +22,14 @@ defmodule DataMorphStructTest do
     assert binary == nil
   end
 
+  test "defmodulestruct/2 macro called second time with same field keys in different order doesn't redefine struct" do
+    DataMorph.Struct.defmodulestruct(Foo.Bar.Foo.Bar, [:baz, :boom])
+
+    {:module, _, binary, template} = DataMorph.Struct.defmodulestruct(Foo.Bar.Foo.Bar, [:boom, :baz])
+    assert Map.to_list(template) == [__struct__: Foo.Bar.Foo.Bar, baz: nil, boom: nil]
+    assert binary == nil
+  end
+
   test "defmodulestruct/2 macro called second time with additional new field redefines struct" do
     DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom])
     {:module, _, _, template} = DataMorph.Struct.defmodulestruct(Baz.Foo, [:baz, :boom, :bish])

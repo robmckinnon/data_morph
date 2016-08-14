@@ -28,9 +28,11 @@ defmodule DataMorph.Struct do
       fields = unquote(fields)
       fields_changeset = try do
                            existing_fields = (struct(module) |> Map.keys) -- [:__struct__]
-                           unless existing_fields === fields do
-                             MapSet.new(existing_fields)
-                             |> MapSet.union(MapSet.new(fields))
+                           existing_fieldset = MapSet.new(existing_fields)
+                           new_fieldset = MapSet.new(fields)
+                           unless existing_fieldset === new_fieldset do
+                             existing_fieldset
+                             |> MapSet.union(new_fieldset)
                              |> MapSet.to_list
                            end
                          rescue
