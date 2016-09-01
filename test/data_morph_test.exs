@@ -2,6 +2,7 @@ defmodule DataMorphTest do
   use ExUnit.Case, async: false
   doctest DataMorph.Csv
   doctest DataMorph.Module
+  doctest DataMorph.Stream
 
   setup do
     stream = "name\tISO code\n" <>
@@ -57,6 +58,14 @@ defmodule DataMorphTest do
   test "structs_from_csv/2 returns correct result from blank string" do
     result = DataMorph.structs_from_csv("", Nothing, :doing)
     assert (result |> Enum.to_list) == []
+  end
+
+  test "filter_and_take/3 returns stream after filter and take applied", context do
+    result = context[:tsv]
+    |> DataMorph.filter_and_take(~r{King|Zeal}, 1)
+    |> Enum.to_list
+
+    assert result == [ "New Zealand\tnz" ]
   end
 
 end

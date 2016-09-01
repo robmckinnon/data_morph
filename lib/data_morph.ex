@@ -99,4 +99,17 @@ defmodule DataMorph do
     rows
     |> DataMorph.Struct.from_rows(namespace, name, headers)
   end
+
+  @doc ~S"""
+  Takes stream and applies filter `regexp` when not nil, and takes `count` when
+  not nil.
+
+  ## Parmeters
+   - `stream`: stream of string lines
+   - `regex`: nil or regexp to match lines via Stream.filter/2 and String.match?/2
+   - `count`: optional take count to apply via Stream.take/2
+  """
+  def filter_and_take(stream, regex, count \\ nil) do
+    DataMorph.Stream.filter_and_take stream, regex, count
+  end
 end

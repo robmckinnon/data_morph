@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.6
+
+* Features
+  * Add `filter_and_take/3` that returns stream with filter regexp and take count applied
+
 ## 0.0.5 (2016-09-23)
 
 * Refactoring
@@ -8,7 +13,6 @@
   * Pass headers separately to struct creation function.
   * Remove redundant `DataMorph.Tsv` module.
   * Pass separator token to `DataMorph.Csv` module instead.
-
 
 ## 0.0.4 (2016-09-09)
 
