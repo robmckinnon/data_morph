@@ -4,6 +4,7 @@
 
 * Features
   * Add `filter_and_take/3` that returns stream with filter regexp and take count applied
+  * Add `puts_tsv/1` and `puts_tsv/2` functions to write streams of string lists as TSV to stdout
 
 ## 0.0.5 (2016-09-23)
 

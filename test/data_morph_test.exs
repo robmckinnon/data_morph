@@ -68,4 +68,23 @@ defmodule DataMorphTest do
     assert result == [ "New Zealand\tnz" ]
   end
 
+  import ExUnit.CaptureIO
+
+  test "puts_tsv/1 writes string lists as TSV to standard out", context do
+    fun = fn ->
+      DataMorph.structs_from_tsv(context[:tsv], :ex, :country)
+      |> Stream.map(& [&1.iso_code, &1.name])
+      |> DataMorph.puts_tsv
+    end
+    assert capture_io(fun) == "nz\tNew Zealand\ngb\tUnited Kingdom\n"
+  end
+
+  test "puts_tsv/2 writes string lists as TSV with headers to standard out", context do
+    fun = fn ->
+      DataMorph.structs_from_tsv(context[:tsv], :ex, :country)
+      |> Stream.map(& [&1.iso_code, &1.name])
+      |> DataMorph.puts_tsv(["iso","name"])
+    end
+    assert capture_io(fun) == "iso\tname\nnz\tNew Zealand\ngb\tUnited Kingdom\n"
+  end
 end

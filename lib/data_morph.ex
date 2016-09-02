@@ -112,4 +112,50 @@ defmodule DataMorph do
   def filter_and_take(stream, regex, count \\ nil) do
     DataMorph.Stream.filter_and_take stream, regex, count
   end
+
+  @doc ~S"""
+  Encode stream of to TSV and write to standard out.
+
+  ## Example
+
+  Write to standard out stream of string lists as TSV lines.
+
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> DataMorph.structs_from_tsv("open-register", :iso_country) \
+      ...> |> Stream.map(& [&1.iso, &1.name]) \
+      ...> DataMorph.puts_tsv
+      nz\tNew Zealand
+      gb\tUnited Kingdom
+  """
+  def puts_tsv(stream) do
+    stream
+    |> CSV.encode(separator: ?\t, delimiter: "\n")
+    |> Enum.each(& IO.write/1)
+  end
+
+  @doc ~S"""
+  Concat headers to stream, encode to TSV and write to standard out.
+
+  ## Example
+
+  Write to standard out stream of string lists as TSV lines with headers.
+
+      iex> "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> DataMorph.structs_from_tsv("open-register", :iso_country) \
+      ...> |> Stream.map(& [&1.iso, &1.name]) \
+      ...> DataMorph.puts_tsv("iso-code","name")
+      iso-code\tname
+      nz\tNew Zealand
+      gb\tUnited Kingdom
+  """
+  def puts_tsv(stream, headers) do
+    Stream.concat([headers], stream)
+    |> puts_tsv
+  end
 end
