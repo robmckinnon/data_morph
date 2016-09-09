@@ -42,20 +42,32 @@ iex> "name\tiso\n" <>
 ]
 ```
 
-Define a struct and return stream of structs created from a `tsv` stream, and a `namespace` string and `name` atom.
+Define a struct and return stream of structs created from a `csv` file stream,
+and a `namespace` string and `name` atom.
+
+```sh
+(echo name,iso && echo New Zealand,nz && echo United Kingdom,gb) > tmp.csv
+```
 
 ```elixir
-iex> "name\tiso\n" <>
-...> "New Zealand\tnz\n" <>
-...> "United Kingdom\tgb" \
-...> |> String.split("\n") \
-...> |> Stream.map(& &1) \
-...> |> DataMorph.structs_from_tsv("open-register", :iso_country) \
+iex> File.stream!('./tmp.csv') \
+...> |> DataMorph.structs_from_csv("open-register", :iso_country) \
 ...> |> Enum.to_list
 [
   %OpenRegister.IsoCountry{iso: "nz", name: "New Zealand"},
   %OpenRegister.IsoCountry{iso: "gb", name: "United Kingdom"}
 ]
+```
+
+Define a struct and puts stream of structs created from a stream of `csv`
+on standard input, and a `namespace` atom, and `name` string.
+```sh
+(echo name,iso && echo New Zealand,NZ) | \
+    mix run -e 'IO.puts inspect \
+    IO.stream(:stdio, :line) \
+    |> DataMorph.structs_from_csv(:ex, "ample") \
+    |> Enum.at(0)'
+# %Ex.Ample{iso: "NZ", name: "New Zealand"}
 ```
 
 Add additional new fields to struct when called again with different `tsv`.
