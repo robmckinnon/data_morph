@@ -81,11 +81,21 @@ defmodule DataMorph.Struct do
   """
   def from_maps maps, namespace, name do
     kind = DataMorph.Module.camelize_concat(namespace, name)
-    fields = maps |> extract_fields
-    defmodulestruct kind, Map.values(fields)
+
     maps
-    |> ParallelStream.map(& &1 |> convert_keys(fields))
-    |> ParallelStream.map(& struct(kind, &1))
+    |> Stream.transform(nil, fn (map, fields) ->
+      convert_map(map, kind, fields) end)
+  end
+
+  defp convert_map(map, kind, nil) do
+    fields = map |> extract_fields
+    defmodulestruct kind, Map.values(fields)
+    convert_map(map, kind, fields)
+  end
+
+  defp convert_map(map, kind, fields) do
+    map = map |> convert_keys(fields)
+    { [struct(kind, map)], fields }
   end
 
   defp convert_keys map, fields do
@@ -102,9 +112,8 @@ defmodule DataMorph.Struct do
     |> String.to_atom
   end
 
-  defp extract_fields stream do
-    stream
-    |> Enum.at(0)
+  defp extract_fields map do
+    map
     |> Map.keys
     |> Map.new(fn x -> {x, normalize(x)} end)
   end
