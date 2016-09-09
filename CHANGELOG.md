@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.4 (2016-09-09)
+
+* Bug Fixes
+  * Change code to only process line at first position of stream once, to fix bug processing from IO.stream :stdio
+
 ## 0.0.3 (2016-08-14)
 
 * Bug Fixes
