@@ -42,4 +42,17 @@ defmodule DataMorphTest do
     assert_structs "OpenRegister.Country", structs
   end
 
+  test "structs_from_csv/2 returns correct result from IO.stream of :stdio" do
+    result = "
+    (echo name,iso && echo New Zealand,NZ) | \
+    mix run -e 'IO.write inspect \
+    IO.stream(:stdio, :line) \
+    |> DataMorph.structs_from_csv(:ex, :ample) \
+    |> Enum.at(0)'"
+    |> String.to_char_list
+    |> :os.cmd
+
+    assert String.contains? "#{result}", "#{'%Ex.Ample{iso: "NZ", name: "New Zealand"}'}"
+  end
+
 end
