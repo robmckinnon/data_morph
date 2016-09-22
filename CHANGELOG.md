@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0 (2016-09-22)
+
+* Refactoring
+  * Create structs from stream of lists, rather than stream of maps.
+
 ## 0.0.4 (2016-09-09)
 
 * Bug Fixes

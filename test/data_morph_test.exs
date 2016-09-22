@@ -21,7 +21,7 @@ defmodule DataMorphTest do
   end
 
   def assert_structs kind, stream do
-    list = Enum.to_list stream
+    list = stream |> Enum.to_list
     assert Enum.count(list) == 2
     List.first(list) |> assert_struct(kind, "nz", "New Zealand")
     List.last(list)  |> assert_struct(kind, "gb", "United Kingdom")
@@ -32,12 +32,13 @@ defmodule DataMorphTest do
     assert_structs "OpenRegister.IsoCountry", structs
   end
 
-  test "from_maps/3 defines struct and returns stream of maps converted to structs" do
+  test "from_rows/3 defines struct and returns stream of rows converted to structs" do
     structs = [
-                %{"name" => "New Zealand", "ISO code" => "nz"},
-                %{"name" => "United Kingdom", "ISO code" => "gb"}
+                ["name","ISO code"],
+                ["New Zealand","nz"],
+                ["United Kingdom","gb"]
               ]
-              |> DataMorph.Struct.from_maps(OpenRegister, "country")
+              |> DataMorph.Struct.from_rows(OpenRegister, "country")
 
     assert_structs "OpenRegister.Country", structs
   end
