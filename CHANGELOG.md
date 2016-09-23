@@ -1,9 +1,14 @@
 # Changelog
 
-## 0.1.0 (2016-09-22)
+## 0.0.5 (2016-09-23)
 
 * Refactoring
   * Create structs from stream of lists, rather than stream of maps.
+  * Return headers separately from CSV/TSV parsing.
+  * Pass headers separately to struct creation function.
+  * Remove redundant `DataMorph.Tsv` module.
+  * Pass separator token to `DataMorph.Csv` module instead.
+
 
 ## 0.0.4 (2016-09-09)
 
