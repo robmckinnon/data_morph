@@ -81,14 +81,9 @@ defmodule DataMorph.Csv do
     {headers, rows}
   end
 
-  defp to_rows(stream = %IO.Stream{}, separator, _) do
-    stream
-    |> decode(separator)
-  end
-
   defp to_rows(stream, separator, first_line) do
     stream
-    |> Stream.reject(& &1 == first_line)
+    |> Stream.drop_while(& &1 == first_line)
     |> decode(separator)
   end
 
