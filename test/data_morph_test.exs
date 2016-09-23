@@ -54,4 +54,9 @@ defmodule DataMorphTest do
     assert String.contains? "#{result}", "#{'%Ex.Ample{iso: "NZ", name: "New Zealand"}'}"
   end
 
+  test "structs_from_csv/2 returns correct result from blank string" do
+    result = DataMorph.structs_from_csv("", Nothing, :doing)
+    assert (result |> Enum.to_list) == []
+  end
+
 end

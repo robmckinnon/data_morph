@@ -14,7 +14,7 @@ defmodule DataMorph.Csv do
       ...> |> Enum.to_list
       []
       ...> headers
-      [""]
+      []
 
   Map a string of lines separated by \n to a stream of rows with
   header row as keys:
@@ -80,6 +80,7 @@ defmodule DataMorph.Csv do
     {headers, rows}
   end
 
+  defp to_headers("", _), do: []
   defp to_headers(line, separator) do
     [line]
     |> decode(separator)
