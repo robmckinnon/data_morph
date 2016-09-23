@@ -1,7 +1,7 @@
 defmodule DataMorph.Struct do
   @moduledoc ~S"""
-  Contains `from_maps/3` function that defines a struct and return structs
-  created from maps, and `defmodulestruct/2` macro to define a struct.
+  Contains `from_rows/3` function that defines a struct and return structs
+  created from rows, and `defmodulestruct/2` macro to define a struct.
   """
 
   @doc ~S"""
@@ -47,59 +47,52 @@ defmodule DataMorph.Struct do
   end
 
   @doc ~S"""
-  Defines a struct and returns structs created from `maps` list or stream, and
-  a `namespace` and `name`.
+  Defines a struct and returns structs created from `rows` list or stream, and
+  a `namespace`, a `name`, and a list of `headers`.
 
   Redefines struct when called again with same namespace and name but different
-  fields, sets struct fields to be the union of the old and new fields.
+  headers, sets struct fields to be the union of the old and new headers.
 
   ## Examples
 
-  Defines a struct and returns stream of structs created from stream of `maps`.
+  Defines a struct and returns stream of structs created from stream of `rows`.
 
-      iex> [
-      ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
-      ...>   %{"name" => "United Kingdom", "ISO code" => "gb"}
+      iex> headers = ["name","ISO code"]
+      ...> [
+      ...>   ["New Zealand","nz"],
+      ...>   ["United Kingdom","gb"]
       ...> ] \
       ...> |> Stream.map(& &1) \
-      ...> |> DataMorph.Struct.from_maps(OpenRegister, "country") \
+      ...> |> DataMorph.Struct.from_rows(OpenRegister, "country", headers) \
       ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
-  Defines a struct and returns stream of structs created from list of `maps`.
+  Defines a struct and returns stream of structs created from list of `rows`.
 
-      iex> [
-      ...>   %{"name" => "New Zealand", "ISO code" => "nz"},
-      ...>   %{"name" => "United Kingdom", "ISO code" => "gb"}
+      iex> headers = ["name","ISO code"]
+      ...> [
+      ...>   ["New Zealand","nz"],
+      ...>   ["United Kingdom","gb"]
       ...> ] \
-      ...> |> DataMorph.Struct.from_maps("open-register", Country) \
+      ...> |> DataMorph.Struct.from_rows("open-register", Country, headers) \
       ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   """
-  def from_maps maps, namespace, name do
+  def from_rows rows, namespace, name, headers do
     kind = DataMorph.Module.camelize_concat(namespace, name)
+    fields = headers |> Enum.map(&normalize/1)
 
-    maps
-    |> Stream.transform(nil, fn (map, fields) ->
-      convert_map(map, kind, fields) end)
+    defmodulestruct kind, fields
+
+    rows |> Stream.map(&convert_row(&1, kind, fields))
   end
 
-  defp convert_map(map, kind, nil) do
-    fields = map |> extract_fields
-    defmodulestruct kind, Map.values(fields)
-    convert_map(map, kind, fields)
-  end
-
-  defp convert_map(map, kind, fields) do
-    map = map |> convert_keys(fields)
-    { [struct(kind, map)], fields }
-  end
-
-  defp convert_keys map, fields do
-    for {key, val} <- map, into: %{}, do: {fields[key], val}
+  defp convert_row(row, kind, fields) do
+    tuples = fields |> Enum.zip(row)
+    struct(kind, tuples)
   end
 
   defp normalize string do
@@ -110,12 +103,6 @@ defmodule DataMorph.Struct do
     |> String.strip()
     |> String.replace(" ", "_")
     |> String.to_atom
-  end
-
-  defp extract_fields map do
-    map
-    |> Map.keys
-    |> Map.new(fn x -> {x, normalize(x)} end)
   end
 
 end

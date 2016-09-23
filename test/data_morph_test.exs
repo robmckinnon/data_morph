@@ -1,6 +1,5 @@
 defmodule DataMorphTest do
   use ExUnit.Case, async: false
-  doctest DataMorph.Tsv
   doctest DataMorph.Csv
   doctest DataMorph.Module
 
@@ -21,7 +20,7 @@ defmodule DataMorphTest do
   end
 
   def assert_structs kind, stream do
-    list = Enum.to_list stream
+    list = stream |> Enum.to_list
     assert Enum.count(list) == 2
     List.first(list) |> assert_struct(kind, "nz", "New Zealand")
     List.last(list)  |> assert_struct(kind, "gb", "United Kingdom")
@@ -32,12 +31,12 @@ defmodule DataMorphTest do
     assert_structs "OpenRegister.IsoCountry", structs
   end
 
-  test "from_maps/3 defines struct and returns stream of maps converted to structs" do
+  test "from_rows/3 defines struct and returns stream of rows converted to structs" do
     structs = [
-                %{"name" => "New Zealand", "ISO code" => "nz"},
-                %{"name" => "United Kingdom", "ISO code" => "gb"}
+                ["New Zealand","nz"],
+                ["United Kingdom","gb"]
               ]
-              |> DataMorph.Struct.from_maps(OpenRegister, "country")
+              |> DataMorph.Struct.from_rows(OpenRegister, "country", ["name","ISO code"])
 
     assert_structs "OpenRegister.Country", structs
   end
@@ -53,6 +52,11 @@ defmodule DataMorphTest do
     |> :os.cmd
 
     assert String.contains? "#{result}", "#{'%Ex.Ample{iso: "NZ", name: "New Zealand"}'}"
+  end
+
+  test "structs_from_csv/2 returns correct result from blank string" do
+    result = DataMorph.structs_from_csv("", Nothing, :doing)
+    assert (result |> Enum.to_list) == []
   end
 
 end
