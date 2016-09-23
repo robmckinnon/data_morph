@@ -41,15 +41,33 @@ defmodule DataMorph.Csv do
         ["United Kingdom","gb"]
       ]
 
+    Map a string of tab-separated lines separated by \n to a stream of rows with
+    header row as keys:
+        iex> "name\tiso\n" <>
+        ...> "New Zealand\tnz\n" <>
+        ...> "United Kingdom\tgb"
+        ...> |> DataMorph.Csv.to_stream_of_rows(separator: ?\t)
+        ...> |> Enum.to_list
+        [
+          ["name","iso"],
+          ["New Zealand","nz"],
+          ["United Kingdom","gb"]
+        ]
   """
-  def to_stream_of_rows(csv) when is_binary(csv) do
+  def to_stream_of_rows(csv) do
+    to_stream_of_rows(csv, [separator: ","])
+  end
+  def to_stream_of_rows(csv, options) when is_binary(csv) do
     csv
       |> String.split("\n")
       |> ParallelStream.map(&(&1))
-      |> to_stream_of_rows
+      |> to_stream_of_rows(options)
   end
-  def to_stream_of_rows(csv) do
-    csv
-      |> CSV.decode()
+  def to_stream_of_rows(csv, options) do
+    separator = options |> Keyword.get(:separator)
+    case separator do
+      "," -> csv |> CSV.decode()
+      _ -> csv |> CSV.decode(separator: separator)
+    end
   end
 end
