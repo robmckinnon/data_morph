@@ -27,7 +27,6 @@ defmodule DataMorph.Mixfile do
   defp deps do
     [
       {:csv, "~> 1.4.2"},
-      {:parallel_stream, "~> 1.0.5"},
       # Docs dependencies
       {:ex_doc, "~> 0.12", only: :docs},
       {:inch_ex, "~> 0.2", only: :docs},
