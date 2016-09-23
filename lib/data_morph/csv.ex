@@ -74,11 +74,16 @@ defmodule DataMorph.Csv do
   def to_headers_and_rows_stream(stream, options) do
     separator = options |> Keyword.get(:separator)
     first_line = stream |> Enum.at(0)
-    headers = [first_line]
-      |> decode(separator)
-      |> Enum.at(0)
+    headers = first_line |> to_headers(separator)
+
     rows = stream |> to_rows(separator, first_line)
     {headers, rows}
+  end
+
+  defp to_headers(line, separator) do
+    [line]
+    |> decode(separator)
+    |> Enum.at(0)
   end
 
   defp to_rows(stream, separator, first_line) do
