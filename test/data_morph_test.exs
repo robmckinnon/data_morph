@@ -33,11 +33,10 @@ defmodule DataMorphTest do
 
   test "from_rows/3 defines struct and returns stream of rows converted to structs" do
     structs = [
-                ["name","ISO code"],
                 ["New Zealand","nz"],
                 ["United Kingdom","gb"]
               ]
-              |> DataMorph.Struct.from_rows(OpenRegister, "country")
+              |> DataMorph.Struct.from_rows(OpenRegister, "country", ["name","ISO code"])
 
     assert_structs "OpenRegister.Country", structs
   end

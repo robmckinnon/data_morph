@@ -9,65 +9,89 @@ defmodule DataMorph.Csv do
   ## Examples
 
   Convert blank string to empty stream.
-      iex> DataMorph.Csv.to_stream_of_rows("")
-      iex> |> Enum.to_list
-      [[""]]
+      iex> {headers, rows} = DataMorph.Csv.to_headers_and_rows_stream("")
+      ...> rows
+      ...> |> Enum.to_list
+      []
+      ...> headers
+      [""]
 
   Map a string of lines separated by \n to a stream of rows with
   header row as keys:
-      iex> "name,iso\n" <>
+      iex> {headers, rows} = "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
       ...> "United Kingdom,gb"
-      ...> |> DataMorph.Csv.to_stream_of_rows
+      ...> |> DataMorph.Csv.to_headers_and_rows_stream
+      ...> rows
       ...> |> Enum.to_list
       [
-        ["name","iso"],
         ["New Zealand","nz"],
         ["United Kingdom","gb"]
       ]
+      ...> headers
+      ["name","iso"]
 
   Map a stream of lines separated by \n to a stream of rows with
   header row as keys:
-      iex> "name,iso\n" <>
+      iex> {headers, rows} = "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
       ...> "United Kingdom,gb"
       ...> |> String.split("\n")
       ...> |> Stream.map(& &1)
-      ...> |> DataMorph.Csv.to_stream_of_rows
+      ...> |> DataMorph.Csv.to_headers_and_rows_stream
+      ...> rows
       ...> |> Enum.to_list
       [
-        ["name","iso"],
         ["New Zealand","nz"],
         ["United Kingdom","gb"]
       ]
+      ...> headers
+      ["name","iso"]
 
     Map a string of tab-separated lines separated by \n to a stream of rows with
     header row as keys:
-        iex> "name\tiso\n" <>
+        iex> {headers, rows} = "name\tiso\n" <>
         ...> "New Zealand\tnz\n" <>
         ...> "United Kingdom\tgb"
-        ...> |> DataMorph.Csv.to_stream_of_rows(separator: ?\t)
+        ...> |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
+        ...> rows
         ...> |> Enum.to_list
         [
-          ["name","iso"],
           ["New Zealand","nz"],
           ["United Kingdom","gb"]
         ]
+        ...> headers
+        ["name","iso"]
   """
-  def to_stream_of_rows(csv) do
-    to_stream_of_rows(csv, [separator: ","])
+  def to_headers_and_rows_stream(csv) do
+    to_headers_and_rows_stream(csv, separator: ",")
   end
-  def to_stream_of_rows(csv, options) when is_binary(csv) do
+  def to_headers_and_rows_stream(csv, options) when is_binary(csv) do
     csv
-      |> String.split("\n")
-      |> ParallelStream.map(&(&1))
-      |> to_stream_of_rows(options)
+    |> String.split("\n")
+    |> to_headers_and_rows_stream(options)
   end
-  def to_stream_of_rows(csv, options) do
+  def to_headers_and_rows_stream(stream, options) do
     separator = options |> Keyword.get(:separator)
-    case separator do
-      "," -> csv |> CSV.decode()
-      _ -> csv |> CSV.decode(separator: separator)
-    end
+    first_line = stream |> Enum.at(0)
+    headers = [first_line]
+      |> decode(separator)
+      |> Enum.at(0)
+    rows = stream |> to_rows(separator, first_line)
+    {headers, rows}
   end
+
+  defp to_rows(stream = %IO.Stream{}, separator, _) do
+    stream
+    |> decode(separator)
+  end
+
+  defp to_rows(stream, separator, first_line) do
+    stream
+    |> Stream.reject(& &1 == first_line)
+    |> decode(separator)
+  end
+
+  defp decode(stream, ","),       do: stream |> CSV.decode()
+  defp decode(stream, separator), do: stream |> CSV.decode(separator: separator)
 end

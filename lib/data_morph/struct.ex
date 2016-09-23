@@ -57,48 +57,42 @@ defmodule DataMorph.Struct do
 
   Defines a struct and returns stream of structs created from stream of `rows`.
 
-      iex> [
-      ...>   ["name","ISO code"],
+      iex> headers = ["name","ISO code"]
+      ...> [
       ...>   ["New Zealand","nz"],
       ...>   ["United Kingdom","gb"]
       ...> ] \
       ...> |> Stream.map(& &1) \
-      ...> |> DataMorph.Struct.from_rows(OpenRegister, "country") \
+      ...> |> DataMorph.Struct.from_rows(OpenRegister, "country", headers) \
       ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   Defines a struct and returns stream of structs created from list of `rows`.
 
-      iex> [
-      ...>   ["name","ISO code"],
+      iex> headers = ["name","ISO code"]
+      ...> [
       ...>   ["New Zealand","nz"],
       ...>   ["United Kingdom","gb"]
       ...> ] \
-      ...> |> DataMorph.Struct.from_rows("open-register", Country) \
+      ...> |> DataMorph.Struct.from_rows("open-register", Country, headers) \
       ...> |> Enum.to_list
       [%OpenRegister.Country{iso_code: "nz", name: "New Zealand"},
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   """
-  def from_rows rows, namespace, name do
+  def from_rows rows, namespace, name, headers do
     kind = DataMorph.Module.camelize_concat(namespace, name)
+    fields = headers |> Enum.map(&normalize/1)
 
-    rows
-    |> Stream.transform(nil, fn (row, fields) ->
-      convert_row(row, kind, fields) end)
-    |> Stream.reject(&is_nil/1)
-  end
-
-  defp convert_row(row, kind, nil) do
-    fields = row |> normalize_fields
     defmodulestruct kind, fields
-    { [nil], fields }
+
+    rows |> Stream.map(&convert_row(&1, kind, fields))
   end
 
   defp convert_row(row, kind, fields) do
     tuples = fields |> Enum.zip(row)
-    { [struct(kind, tuples)], fields }
+    struct(kind, tuples)
   end
 
   defp normalize string do
@@ -109,11 +103,6 @@ defmodule DataMorph.Struct do
     |> String.strip()
     |> String.replace(" ", "_")
     |> String.to_atom
-  end
-
-  defp normalize_fields row do
-    row
-    |> Enum.map(fn x -> normalize(x) end)
   end
 
 end
