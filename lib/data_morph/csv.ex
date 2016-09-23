@@ -1,14 +1,14 @@
 defmodule DataMorph.Csv do
   @moduledoc ~S"""
-  Functions for converting CSV stream or string, to stream of rows.
+  Functions for converting enumerable, or string of CSV to stream of rows.
   """
 
   @doc ~S"""
-  Parse `csv` string or stream to stream of rows.
+  Parse `csv` string, stream, or enumerable to stream of rows.
 
   ## Examples
 
-  Convert blank string to empty stream.
+  Convert blank string to empty headers and empty stream.
       iex> {headers, rows} = DataMorph.Csv.to_headers_and_rows_stream("")
       ...> rows
       ...> |> Enum.to_list
@@ -16,8 +16,8 @@ defmodule DataMorph.Csv do
       ...> headers
       []
 
-  Map a string of lines separated by \n to a stream of rows with
-  header row as keys:
+  Map a string of lines separated by \n to headers, and a stream of rows as
+  lists:
       iex> {headers, rows} = "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
       ...> "United Kingdom,gb"
@@ -31,8 +31,8 @@ defmodule DataMorph.Csv do
       ...> headers
       ["name","iso"]
 
-  Map a stream of lines separated by \n to a stream of rows with
-  header row as keys:
+  Map a stream of lines separated by \n to headers, and a stream of rows as
+  lists:
       iex> {headers, rows} = "name,iso\n" <>
       ...> "New Zealand,nz\n" <>
       ...> "United Kingdom,gb"
@@ -48,8 +48,8 @@ defmodule DataMorph.Csv do
       ...> headers
       ["name","iso"]
 
-    Map a string of tab-separated lines separated by \n to a stream of rows with
-    header row as keys:
+    Map a string of tab-separated lines separated by \n to headers, and a stream
+    of rows as lists:
         iex> {headers, rows} = "name\tiso\n" <>
         ...> "New Zealand\tnz\n" <>
         ...> "United Kingdom\tgb"

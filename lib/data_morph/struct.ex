@@ -48,10 +48,10 @@ defmodule DataMorph.Struct do
 
   @doc ~S"""
   Defines a struct and returns structs created from `rows` list or stream, and
-  a `namespace` and `name`.
+  a `namespace`, a `name`, and a list of `headers`.
 
   Redefines struct when called again with same namespace and name but different
-  fields, sets struct fields to be the union of the old and new fields.
+  headers, sets struct fields to be the union of the old and new headers.
 
   ## Examples
 
