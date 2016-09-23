@@ -31,15 +31,15 @@ end
 Define a struct and return stream of structs created from a `tsv` string, a `namespace` atom and `name` string.
 
 ```elixir
-iex> "name\tiso\n" <>
-...> "New Zealand\tnz\n" <>
-...> "United Kingdom\tgb" \
-...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
-...> |> Enum.to_list
-[
-  %OpenRegister.Country{iso: "nz", name: "New Zealand"},
-  %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
-]
+"name\tiso\n" <>
+"New Zealand\tnz\n" <>
+"United Kingdom\tgb" \
+|> DataMorph.structs_from_tsv(OpenRegister, "country") \
+|> Enum.to_list
+# [
+#   %OpenRegister.Country{iso: "nz", name: "New Zealand"},
+#   %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
+# ]
 ```
 
 Define a struct and return stream of structs created from a `csv` file stream,
@@ -50,13 +50,13 @@ and a `namespace` string and `name` atom.
 ```
 
 ```elixir
-iex> File.stream!('./tmp.csv') \
-...> |> DataMorph.structs_from_csv("open-register", :iso_country) \
-...> |> Enum.to_list
-[
-  %OpenRegister.IsoCountry{iso: "nz", name: "New Zealand"},
-  %OpenRegister.IsoCountry{iso: "gb", name: "United Kingdom"}
-]
+File.stream!('./tmp.csv') \
+|> DataMorph.structs_from_csv("open-register", :iso_country) \
+|> Enum.to_list
+# [
+#   %OpenRegister.IsoCountry{iso: "nz", name: "New Zealand"},
+#   %OpenRegister.IsoCountry{iso: "gb", name: "United Kingdom"}
+# ]
 ```
 
 Define a struct and puts stream of structs created from a stream of `csv`
@@ -73,19 +73,19 @@ on standard input, and a `namespace` atom, and `name` string.
 Add additional new fields to struct when called again with different `tsv`.
 
 ```elixir
-iex> "name\tiso\n" <>
-...> "New Zealand\tnz\n" <>
-...> "United Kingdom\tgb" \
-...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
-...> |> Enum.to_list
-...>
-...> "name\tacronym\n" <>
-...> "New Zealand\tNZ\n" <>
-...> "United Kingdom\tUK" \
-...> |> DataMorph.structs_from_tsv(OpenRegister, "country") \
-...> |> Enum.to_list
-[
-  %OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
-  %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
-]
+"name\tiso\n" <>
+"New Zealand\tnz\n" <>
+"United Kingdom\tgb" \
+|> DataMorph.structs_from_tsv(OpenRegister, "country") \
+|> Enum.to_list
+
+"name\tacronym\n" <>
+"New Zealand\tNZ\n" <>
+"United Kingdom\tUK" \
+|> DataMorph.structs_from_tsv(OpenRegister, "country") \
+|> Enum.to_list
+# [
+#   %OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
+#   %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
+# ]
 ```
