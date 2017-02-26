@@ -2,6 +2,7 @@ defmodule DataMorphTest do
   use ExUnit.Case, async: false
   doctest DataMorph.Csv
   doctest DataMorph.Module
+  doctest DataMorph.Stream
 
   setup do
     stream = "name\tISO code\n" <>
@@ -59,4 +60,31 @@ defmodule DataMorphTest do
     assert (result |> Enum.to_list) == []
   end
 
+  test "filter_and_take/3 returns stream after filter and take applied", context do
+    result = context[:tsv]
+    |> DataMorph.filter_and_take(~r{King|Zeal}, 1)
+    |> Enum.to_list
+
+    assert result == [ "New Zealand\tnz" ]
+  end
+
+  import ExUnit.CaptureIO
+
+  test "puts_tsv/1 writes string lists as TSV to standard out", context do
+    fun = fn ->
+      DataMorph.structs_from_tsv(context[:tsv], :ex, :country)
+      |> Stream.map(& [&1.iso_code, &1.name])
+      |> DataMorph.puts_tsv
+    end
+    assert capture_io(fun) == "nz\tNew Zealand\ngb\tUnited Kingdom\n"
+  end
+
+  test "puts_tsv/2 writes string lists as TSV with headers to standard out", context do
+    fun = fn ->
+      DataMorph.structs_from_tsv(context[:tsv], :ex, :country)
+      |> Stream.map(& [&1.iso_code, &1.name])
+      |> DataMorph.puts_tsv(["iso","name"])
+    end
+    assert capture_io(fun) == "iso\tname\nnz\tNew Zealand\ngb\tUnited Kingdom\n"
+  end
 end
