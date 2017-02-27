@@ -39,9 +39,21 @@ defmodule DataMorphTest do
     assert_maps maps
   end
 
+  def assert_keyword_lists stream do
+    list = stream |> Enum.to_list
+    assert Enum.count(list) == 2
+    assert (list |> List.first) == [{:"name", "New Zealand"}, {:"ISO code", "nz"}]
+    assert (list |> List.last) == [{:"name", "United Kingdom"}, {:"ISO code", "gb"}]
+  end
+
   test "creates structs from TSV", context do
     structs = DataMorph.structs_from_tsv(context[:tsv], OpenRegister, :iso_country)
     assert_structs "OpenRegister.IsoCountry", structs
+  end
+
+  test "creates keyword lists from TSV", context do
+    lists = DataMorph.keyword_lists_from_tsv(context[:tsv])
+    assert_keyword_lists lists
   end
 
   test "from_rows/3 defines struct and returns stream of rows converted to structs" do

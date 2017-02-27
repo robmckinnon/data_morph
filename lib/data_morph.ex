@@ -143,6 +143,33 @@ defmodule DataMorph do
   end
 
   @doc ~S"""
+  Returns stream of keyword_lists created from `tsv` string or stream.
+
+  Useful when you want to retain the field order of the original stream.
+
+  ## Example
+
+  Return stream of keyword lists created from a `tsv` string.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.keyword_lists_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        [name: "New Zealand", "iso-code": "nz"],
+        [name: "United Kingdom", "iso-code": "gb"]
+      ]
+  """
+  def keyword_lists_from_tsv tsv do
+    {headers, rows} = tsv
+      |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
+    keywords = headers |> Enum.map(& String.to_atom/1)
+    rows
+    |> Enum.map(& keywords |> Enum.zip(&1) )
+  end
+
+  @doc ~S"""
   Takes stream and applies filter `regexp` when not nil, and takes `count` when
   not nil.
 

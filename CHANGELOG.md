@@ -3,6 +3,7 @@
 ## 0.0.6
 
 * Features
+  * Add `keyword_lists_from_tsv/1` that returns keyword lists stream for given TSV
   * Add `filter_and_take/3` that returns stream with filter regexp and take count applied
   * Add `puts_tsv/1` and `puts_tsv/2` functions to write streams of string lists as TSV to stdout
 
