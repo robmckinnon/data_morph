@@ -73,11 +73,7 @@ defmodule DataMorph do
    - `name`: string or atom to form last part of struct alias
   """
   def structs_from_tsv tsv, namespace, name do
-    {headers, rows} = tsv
-      |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
-
-    rows
-    |> DataMorph.Struct.from_rows(namespace, name, headers)
+    tsv |> structs_from_csv(namespace, name, separator: ?\t)
   end
 
   @doc ~S"""
@@ -92,9 +88,9 @@ defmodule DataMorph do
    - `namespace`: string or atom to form first part of struct alias
    - `name`: string or atom to form last part of struct alias
   """
-  def structs_from_csv csv, namespace, name do
+  def structs_from_csv(csv, namespace, name, options \\ [separator: ","]) do
     {headers, rows} = csv
-      |> DataMorph.Csv.to_headers_and_rows_stream
+      |> DataMorph.Csv.to_headers_and_rows_stream(options)
 
     rows
     |> DataMorph.Struct.from_rows(namespace, name, headers)
