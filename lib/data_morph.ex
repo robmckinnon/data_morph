@@ -97,6 +97,52 @@ defmodule DataMorph do
   end
 
   @doc ~S"""
+  Returns stream of maps with atom keys created from `tsv` string or stream.
+
+  ## Example
+
+  Return stream of maps with atom keys created from a `tsv` stream.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.maps_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        %{iso_code: "nz", name: "New Zealand"},
+        %{iso_code: "gb", name: "United Kingdom"}
+      ]
+
+  ## Parmeters
+
+   - `tsv`: TSV stream or string
+
+  """
+  def maps_from_tsv tsv do
+    tsv |> maps_from_csv(separator: ?\t)
+  end
+
+  @doc ~S"""
+  Returns stream of maps with atom keys created from `csv` string or stream.
+
+  ## Parmeters
+
+   - `csv`: CSV stream or string
+
+  """
+  def maps_from_csv(csv, options \\ [separator: ","]) do
+    {headers, rows} = csv
+      |> DataMorph.Csv.to_headers_and_rows_stream(options)
+
+    fields = headers |> Enum.map(&DataMorph.Struct.normalize/1)
+
+    rows
+    |> Stream.map(& fields |> Enum.zip(&1) |> Map.new)
+  end
+
+  @doc ~S"""
   Takes stream and applies filter `regexp` when not nil, and takes `count` when
   not nil.
 

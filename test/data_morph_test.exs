@@ -27,6 +27,18 @@ defmodule DataMorphTest do
     List.last(list)  |> assert_struct(kind, "gb", "United Kingdom")
   end
 
+  def assert_maps stream do
+    list = stream |> Enum.to_list
+    assert Enum.count(list) == 2
+    assert List.first(list) == %{iso_code: "nz", name: "New Zealand"}
+    assert List.last(list) == %{iso_code: "gb", name: "United Kingdom"}
+  end
+
+  test "creates maps with atom keys from TSV", context do
+    maps = DataMorph.maps_from_tsv(context[:tsv])
+    assert_maps maps
+  end
+
   test "creates structs from TSV", context do
     structs = DataMorph.structs_from_tsv(context[:tsv], OpenRegister, :iso_country)
     assert_structs "OpenRegister.IsoCountry", structs

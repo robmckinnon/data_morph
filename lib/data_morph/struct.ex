@@ -95,7 +95,7 @@ defmodule DataMorph.Struct do
     struct(kind, tuples)
   end
 
-  defp normalize string do
+  def normalize string do
     string
     |> String.downcase
     |> String.replace(~r"\W", " ")
