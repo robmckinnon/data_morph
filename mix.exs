@@ -1,7 +1,7 @@
 defmodule DataMorph.Mixfile do
   use Mix.Project
 
-  @version "0.0.5"
+  @version "0.0.6"
 
   def project do
     [app: :data_morph,
@@ -37,7 +37,7 @@ defmodule DataMorph.Mixfile do
 
   defp description do
     """
-    Create Elixir structs from data.
+    Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
     """
   end
 
