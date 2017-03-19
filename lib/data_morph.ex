@@ -1,8 +1,8 @@
 defmodule DataMorph do
   @moduledoc ~S"""
-  Create Elixir structs from data.
+  Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
 
-  ## Example
+  ## Examples
 
   Define a struct and return stream of structs created from a `tsv` string, a
   `namespace` atom and `name` string.
@@ -17,6 +17,31 @@ defmodule DataMorph do
         %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
       ]
 
+  Return stream of maps with atom keys created from a `tsv` stream.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.maps_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        %{iso_code: "nz", name: "New Zealand"},
+        %{iso_code: "gb", name: "United Kingdom"}
+      ]
+
+  Return stream of keyword lists created from a `tsv` string.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.keyword_lists_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        [name: "New Zealand", "iso-code": "nz"],
+        [name: "United Kingdom", "iso-code": "gb"]
+      ]
   """
 
   require DataMorph.Struct
