@@ -162,8 +162,21 @@ defmodule DataMorph do
       ]
   """
   def keyword_lists_from_tsv tsv do
-    {headers, rows} = tsv
-      |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
+    tsv |> keyword_lists_from_csv(separator: ?\t)
+  end
+
+  @doc ~S"""
+  Returns stream of keyword_lists created from `csv` string or stream.
+
+  Useful when you want to retain the field order of the original stream.
+
+  ## Parmeters
+   - `csv`: CSV stream or string
+   - `options`: optionally pass in separator, e.g. separator: ";"
+  """
+  def keyword_lists_from_csv(csv, options \\ [separator: ","]) do
+    {headers, rows} = csv
+      |> DataMorph.Csv.to_headers_and_rows_stream(options)
     keywords = headers |> Enum.map(& String.to_atom/1)
     rows
     |> Enum.map(& keywords |> Enum.zip(&1) )
