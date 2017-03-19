@@ -1,8 +1,8 @@
 defmodule DataMorph do
   @moduledoc ~S"""
-  Create Elixir structs from data.
+  Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
 
-  ## Example
+  ## Examples
 
   Define a struct and return stream of structs created from a `tsv` string, a
   `namespace` atom and `name` string.
@@ -17,6 +17,31 @@ defmodule DataMorph do
         %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
       ]
 
+  Return stream of maps with atom keys created from a `tsv` stream.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> String.split("\n") \
+      ...> |> Stream.map(& &1) \
+      ...> |> DataMorph.maps_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        %{iso_code: "nz", name: "New Zealand"},
+        %{iso_code: "gb", name: "United Kingdom"}
+      ]
+
+  Return stream of keyword lists created from a `tsv` string.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.keyword_lists_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        [name: "New Zealand", "iso-code": "nz"],
+        [name: "United Kingdom", "iso-code": "gb"]
+      ]
   """
 
   require DataMorph.Struct
@@ -87,6 +112,7 @@ defmodule DataMorph do
    - `csv`: CSV stream or string
    - `namespace`: string or atom to form first part of struct alias
    - `name`: string or atom to form last part of struct alias
+   - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def structs_from_csv(csv, namespace, name, options \\ [separator: ","]) do
     {headers, rows} = csv
@@ -118,7 +144,6 @@ defmodule DataMorph do
   ## Parmeters
 
    - `tsv`: TSV stream or string
-
   """
   def maps_from_tsv tsv do
     tsv |> maps_from_csv(separator: ?\t)
@@ -130,7 +155,7 @@ defmodule DataMorph do
   ## Parmeters
 
    - `csv`: CSV stream or string
-
+   - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def maps_from_csv(csv, options \\ [separator: ","]) do
     {headers, rows} = csv
@@ -140,6 +165,46 @@ defmodule DataMorph do
 
     rows
     |> Stream.map(& fields |> Enum.zip(&1) |> Map.new)
+  end
+
+  @doc ~S"""
+  Returns stream of keyword_lists created from `tsv` string or stream.
+
+  Useful when you want to retain the field order of the original stream.
+
+  ## Example
+
+  Return stream of keyword lists created from a `tsv` string.
+
+      iex> "name\tiso-code\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb" \
+      ...> |> DataMorph.keyword_lists_from_tsv() \
+      ...> |> Enum.to_list
+      [
+        [name: "New Zealand", "iso-code": "nz"],
+        [name: "United Kingdom", "iso-code": "gb"]
+      ]
+  """
+  def keyword_lists_from_tsv tsv do
+    tsv |> keyword_lists_from_csv(separator: ?\t)
+  end
+
+  @doc ~S"""
+  Returns stream of keyword_lists created from `csv` string or stream.
+
+  Useful when you want to retain the field order of the original stream.
+
+  ## Parmeters
+   - `csv`: CSV stream or string
+   - `options`: optionally pass in separator, e.g. separator: ";"
+  """
+  def keyword_lists_from_csv(csv, options \\ [separator: ","]) do
+    {headers, rows} = csv
+      |> DataMorph.Csv.to_headers_and_rows_stream(options)
+    keywords = headers |> Enum.map(& String.to_atom/1)
+    rows
+    |> Enum.map(& keywords |> Enum.zip(&1) )
   end
 
   @doc ~S"""
