@@ -87,6 +87,7 @@ defmodule DataMorph do
    - `csv`: CSV stream or string
    - `namespace`: string or atom to form first part of struct alias
    - `name`: string or atom to form last part of struct alias
+   - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def structs_from_csv(csv, namespace, name, options \\ [separator: ","]) do
     {headers, rows} = csv
@@ -118,7 +119,6 @@ defmodule DataMorph do
   ## Parmeters
 
    - `tsv`: TSV stream or string
-
   """
   def maps_from_tsv tsv do
     tsv |> maps_from_csv(separator: ?\t)
@@ -130,7 +130,7 @@ defmodule DataMorph do
   ## Parmeters
 
    - `csv`: CSV stream or string
-
+   - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def maps_from_csv(csv, options \\ [separator: ","]) do
     {headers, rows} = csv
