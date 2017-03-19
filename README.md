@@ -1,6 +1,6 @@
 # DataMorph
 
-Create Elixir structs from data.
+Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
 
 [![Build Status](https://api.travis-ci.org/robmckinnon/data_morph.svg)](https://travis-ci.org/robmckinnon/data_morph)
 [![Inline docs](http://inch-ci.org/github/robmckinnon/data_morph.svg)](http://inch-ci.org/github/robmckinnon/data_morph)
@@ -14,14 +14,14 @@ You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/da
 
 Add
 ```elixir
-{:data_morph, "~> 0.0.5"}
+{:data_morph, "~> 0.0.6"}
 ```
 to your deps in `mix.exs` like so:
 
 ```elixir
 defp deps do
   [
-    {:data_morph, "~> 0.0.5"}
+    {:data_morph, "~> 0.0.6"}
   ]
 end
 ```
@@ -89,3 +89,5 @@ Add additional new fields to struct when called again with different `tsv`.
 #   %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
 # ]
 ```
+
+You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/data_morph/DataMorph.html).
