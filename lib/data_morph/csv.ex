@@ -96,6 +96,6 @@ defmodule DataMorph.Csv do
     |> decode(separator)
   end
 
-  defp decode(stream, ","), do: stream |> CSV.decode()
-  defp decode(stream, separator), do: stream |> CSV.decode(separator: separator)
+  defp decode(stream, ","), do: stream |> CSV.decode!()
+  defp decode(stream, separator), do: stream |> CSV.decode!(separator: separator)
 end
