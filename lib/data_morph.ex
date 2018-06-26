@@ -97,7 +97,7 @@ defmodule DataMorph do
    - `namespace`: string or atom to form first part of struct alias
    - `name`: string or atom to form last part of struct alias
   """
-  def structs_from_tsv tsv, namespace, name do
+  def structs_from_tsv(tsv, namespace, name) do
     tsv |> structs_from_csv(namespace, name, separator: ?\t)
   end
 
@@ -115,7 +115,8 @@ defmodule DataMorph do
    - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def structs_from_csv(csv, namespace, name, options \\ [separator: ","]) do
-    {headers, rows} = csv
+    {headers, rows} =
+      csv
       |> DataMorph.Csv.to_headers_and_rows_stream(options)
 
     rows
@@ -145,7 +146,7 @@ defmodule DataMorph do
 
    - `tsv`: TSV stream or string
   """
-  def maps_from_tsv tsv do
+  def maps_from_tsv(tsv) do
     tsv |> maps_from_csv(separator: ?\t)
   end
 
@@ -158,13 +159,14 @@ defmodule DataMorph do
    - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def maps_from_csv(csv, options \\ [separator: ","]) do
-    {headers, rows} = csv
+    {headers, rows} =
+      csv
       |> DataMorph.Csv.to_headers_and_rows_stream(options)
 
     fields = headers |> Enum.map(&DataMorph.Struct.normalize/1)
 
     rows
-    |> Stream.map(& fields |> Enum.zip(&1) |> Map.new)
+    |> Stream.map(&(fields |> Enum.zip(&1) |> Map.new()))
   end
 
   @doc ~S"""
@@ -186,7 +188,7 @@ defmodule DataMorph do
         [name: "United Kingdom", "iso-code": "gb"]
       ]
   """
-  def keyword_lists_from_tsv tsv do
+  def keyword_lists_from_tsv(tsv) do
     tsv |> keyword_lists_from_csv(separator: ?\t)
   end
 
@@ -200,11 +202,14 @@ defmodule DataMorph do
    - `options`: optionally pass in separator, e.g. separator: ";"
   """
   def keyword_lists_from_csv(csv, options \\ [separator: ","]) do
-    {headers, rows} = csv
+    {headers, rows} =
+      csv
       |> DataMorph.Csv.to_headers_and_rows_stream(options)
-    keywords = headers |> Enum.map(& String.to_atom/1)
+
+    keywords = headers |> Enum.map(&String.to_atom/1)
+
     rows
-    |> Enum.map(& keywords |> Enum.zip(&1) )
+    |> Enum.map(&(keywords |> Enum.zip(&1)))
   end
 
   @doc ~S"""
@@ -217,7 +222,7 @@ defmodule DataMorph do
    - `count`: optional take count to apply via Stream.take/2
   """
   def filter_and_take(stream, regex, count \\ nil) do
-    DataMorph.Stream.filter_and_take stream, regex, count
+    DataMorph.Stream.filter_and_take(stream, regex, count)
   end
 
   @doc ~S"""
@@ -240,7 +245,7 @@ defmodule DataMorph do
   def puts_tsv(stream) do
     stream
     |> CSV.encode(separator: ?\t, delimiter: "\n")
-    |> Enum.each(& IO.write/1)
+    |> Enum.each(&IO.write/1)
   end
 
   @doc ~S"""

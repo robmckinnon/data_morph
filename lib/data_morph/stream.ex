@@ -1,5 +1,4 @@
 defmodule DataMorph.Stream do
-
   @doc ~S"""
   Filter via `regexp` and take `count`.
 
@@ -49,9 +48,8 @@ defmodule DataMorph.Stream do
   end
 
   defp apply_filter(stream, nil), do: stream
-  defp apply_filter(stream, regexp), do: stream |> Stream.filter(& &1 |> String.match?(regexp))
+  defp apply_filter(stream, regexp), do: stream |> Stream.filter(&(&1 |> String.match?(regexp)))
 
   defp apply_take(stream, nil), do: stream
   defp apply_take(stream, count), do: stream |> Stream.take(count)
-
 end

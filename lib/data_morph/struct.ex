@@ -22,24 +22,28 @@ defmodule DataMorph.Struct do
       %Foo.Bar{bash: "boom", baz: nil, bish: "zy", boom: nil}
 
   """
-  defmacro defmodulestruct kind, fields do
+  defmacro defmodulestruct(kind, fields) do
     quote do
       module = unquote(kind)
       fields = unquote(fields)
-      fields_changeset = try do
-                           existing_fields = (struct(module) |> Map.keys) -- [:__struct__]
-                           existing_fieldset = MapSet.new(existing_fields)
-                           new_fieldset = MapSet.new(fields)
-                           unless existing_fieldset === new_fieldset do
-                             existing_fieldset
-                             |> MapSet.union(new_fieldset)
-                             |> MapSet.to_list
-                           end
-                         rescue
-                           UndefinedFunctionError -> fields
-                         end
+
+      fields_changeset =
+        try do
+          existing_fields = (struct(module) |> Map.keys()) -- [:__struct__]
+          existing_fieldset = MapSet.new(existing_fields)
+          new_fieldset = MapSet.new(fields)
+
+          unless existing_fieldset === new_fieldset do
+            existing_fieldset
+            |> MapSet.union(new_fieldset)
+            |> MapSet.to_list()
+          end
+        rescue
+          UndefinedFunctionError -> fields
+        end
+
       if fields_changeset do
-        defmodule Module.concat([module]), do: defstruct fields_changeset
+        defmodule(Module.concat([module]), do: defstruct(fields_changeset))
       else
         {:module, module, nil, struct(module)}
       end
@@ -81,11 +85,11 @@ defmodule DataMorph.Struct do
       %OpenRegister.Country{iso_code: "gb", name: "United Kingdom"}]
 
   """
-  def from_rows rows, namespace, name, headers do
+  def from_rows(rows, namespace, name, headers) do
     kind = DataMorph.Module.camelize_concat(namespace, name)
     fields = headers |> Enum.map(&normalize/1)
 
-    defmodulestruct kind, fields
+    defmodulestruct(kind, fields)
 
     rows |> Stream.map(&convert_row(&1, kind, fields))
   end
@@ -95,14 +99,13 @@ defmodule DataMorph.Struct do
     struct(kind, tuples)
   end
 
-  def normalize string do
+  def normalize(string) do
     string
-    |> String.downcase
+    |> String.downcase()
     |> String.replace(~r"\W", " ")
     |> String.replace(~r"  +", " ")
     |> String.strip()
     |> String.replace(" ", "_")
-    |> String.to_atom
+    |> String.to_atom()
   end
-
 end
