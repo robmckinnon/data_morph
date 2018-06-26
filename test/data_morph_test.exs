@@ -75,7 +75,7 @@ defmodule DataMorphTest do
     IO.stream(:stdio, :line) \
     |> DataMorph.structs_from_csv(:ex, :ample) \
     |> Enum.at(0)'"
-      |> String.to_char_list()
+      |> String.to_charlist()
       |> :os.cmd()
 
     assert String.contains?("#{result}", "#{'%Ex.Ample{iso: "NZ", name: "New Zealand"}'}")

@@ -104,7 +104,7 @@ defmodule DataMorph.Struct do
     |> String.downcase()
     |> String.replace(~r"\W", " ")
     |> String.replace(~r"  +", " ")
-    |> String.strip()
+    |> String.trim()
     |> String.replace(" ", "_")
     |> String.to_atom()
   end
