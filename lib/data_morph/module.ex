@@ -58,17 +58,18 @@ defmodule DataMorph.Module do
   def camelize_concat(aliases) do
     aliases
     |> camelize
-    |> Module.concat
+    |> Module.concat()
   end
 
   defp camelize([]), do: []
   defp camelize([head | tail]), do: [camelize(head) | camelize(tail)]
   defp camelize(nil), do: nil
   defp camelize(""), do: nil
-  defp camelize(atom) when is_atom(atom), do: atom |> Atom.to_string |> camelize
+  defp camelize(atom) when is_atom(atom), do: atom |> Atom.to_string() |> camelize()
+
   defp camelize(string) do
     string
     |> String.replace("-", "_")
-    |> Macro.camelize
+    |> Macro.camelize()
   end
 end

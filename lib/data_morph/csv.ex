@@ -66,11 +66,13 @@ defmodule DataMorph.Csv do
   def to_headers_and_rows_stream(csv) do
     to_headers_and_rows_stream(csv, separator: ",")
   end
+
   def to_headers_and_rows_stream(csv, options) when is_binary(csv) do
     csv
     |> String.split("\n")
     |> to_headers_and_rows_stream(options)
   end
+
   def to_headers_and_rows_stream(stream, options) do
     separator = options |> Keyword.get(:separator)
     first_line = stream |> Enum.at(0)
@@ -81,6 +83,7 @@ defmodule DataMorph.Csv do
   end
 
   defp to_headers("", _), do: []
+
   defp to_headers(line, separator) do
     [line]
     |> decode(separator)
@@ -89,10 +92,10 @@ defmodule DataMorph.Csv do
 
   defp to_rows(stream, separator, first_line) do
     stream
-    |> Stream.drop_while(& &1 == first_line)
+    |> Stream.drop_while(&(&1 == first_line))
     |> decode(separator)
   end
 
-  defp decode(stream, ","),       do: stream |> CSV.decode()
-  defp decode(stream, separator), do: stream |> CSV.decode(separator: separator)
+  defp decode(stream, ","), do: stream |> CSV.decode!()
+  defp decode(stream, separator), do: stream |> CSV.decode!(separator: separator)
 end

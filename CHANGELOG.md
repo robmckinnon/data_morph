@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.0.6
+## 0.0.7 (2018-06-26)
+
+* Dependencies update
+  * Update to latest version of depedencies.
+  * Format code with Elixir formatter.
+
+## 0.0.6 (2017-03-19)
 
 * Features
   * Add `keyword_lists_from_tsv/1` and `keyword_lists_from_csv/2` that returns keyword lists stream for given TSV/CSV
