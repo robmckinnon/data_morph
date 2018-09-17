@@ -48,20 +48,20 @@ defmodule DataMorph.Csv do
       ...> headers
       ["name","iso"]
 
-    Map a string of tab-separated lines separated by \n to headers, and a stream
-    of rows as lists:
-        iex> {headers, rows} = "name\tiso\n" <>
-        ...> "New Zealand\tnz\n" <>
-        ...> "United Kingdom\tgb"
-        ...> |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
-        ...> rows
-        ...> |> Enum.to_list
-        [
-          ["New Zealand","nz"],
-          ["United Kingdom","gb"]
-        ]
-        ...> headers
-        ["name","iso"]
+  Map a string of tab-separated lines separated by \n to headers, and a stream
+  of rows as lists:
+      iex> {headers, rows} = "name\tiso\n" <>
+      ...> "New Zealand\tnz\n" <>
+      ...> "United Kingdom\tgb"
+      ...> |> DataMorph.Csv.to_headers_and_rows_stream(separator: ?\t)
+      ...> rows
+      ...> |> Enum.to_list
+      [
+        ["New Zealand","nz"],
+        ["United Kingdom","gb"]
+      ]
+      ...> headers
+      ["name","iso"]
   """
   def to_headers_and_rows_stream(csv) do
     to_headers_and_rows_stream(csv, separator: ",")
