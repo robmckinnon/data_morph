@@ -1,13 +1,13 @@
 defmodule DataMorph.Mixfile do
   use Mix.Project
 
-  @version "0.0.7"
+  @version "0.0.8"
 
   def project do
     [
       app: :data_morph,
       version: @version,
-      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6",
+      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6 or ~> 1.7",
       description: description(),
       deps: deps(),
       package: package(),
@@ -27,10 +27,10 @@ defmodule DataMorph.Mixfile do
     [
       {:csv, "~> 2.1"},
       # Docs dependencies
-      {:ex_doc, "~> 0.18", only: :docs},
-      {:inch_ex, "~> 0.5", only: :docs},
+      {:ex_doc, "~> 0.19", only: :docs},
+      {:inch_ex, "~> 1.0.0", only: :docs},
       # Test dependencies
-      {:mix_test_watch, "~> 0.6", only: :dev}
+      {:mix_test_watch, "~> 0.9", only: :dev}
     ]
   end
 

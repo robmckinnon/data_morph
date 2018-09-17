@@ -1,9 +1,16 @@
 # Changelog
 
+## 0.0.8 (2018-09-17)
+
+* Elixir update
+  * Support latest version of Elixir.
+* Dependencies update
+  * Update to latest version of dependencies.
+
 ## 0.0.7 (2018-06-26)
 
 * Dependencies update
-  * Update to latest version of depedencies.
+  * Update to latest version of dependencies.
   * Format code with Elixir formatter.
 
 ## 0.0.6 (2017-03-19)
