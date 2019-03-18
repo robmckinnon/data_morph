@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.9 (2019-03-18)
+
+* Elixir update
+  * Support latest version of Elixir (1.8).
+* Dependencies update
+  * Update to latest version of dependencies.
+
 ## 0.0.8 (2018-09-17)
 
 * Elixir update
