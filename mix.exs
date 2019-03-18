@@ -7,7 +7,7 @@ defmodule DataMorph.Mixfile do
     [
       app: :data_morph,
       version: @version,
-      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6 or ~> 1.7",
+      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8",
       description: description(),
       deps: deps(),
       package: package(),
