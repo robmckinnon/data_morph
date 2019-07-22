@@ -10,83 +10,95 @@ Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
 
 You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/data_morph/DataMorph.html).
 
+Note, we should never convert user input to atoms. This is because atoms are not
+garbage collected. Once an atom is created, it is never reclaimed.
+
+Generating atoms from user input would mean the user can inject enough
+different names to exhaust our system memory, or we reach the Erlang VM limit
+for the maximum number of atoms which will bring our system down regardless.
+
 ## Installation
 
 Add
 ```elixir
-{:data_morph, "~> 0.0.9"}
+{:data_morph, "~> 0.1.0"}
 ```
 to your deps in `mix.exs` like so:
 
 ```elixir
 defp deps do
   [
-    {:data_morph, "~> 0.0.9"}
+    {:data_morph, "~> 0.1.0"}
   ]
 end
 ```
 
 ## Usage examples
 
-Define a struct and return stream of structs created from a `tsv` string, a `namespace` atom and `name` string.
-
-```elixir
-"name\tiso\n" <>
-"New Zealand\tnz\n" <>
-"United Kingdom\tgb" \
-|> DataMorph.structs_from_tsv(OpenRegister, "country") \
-|> Enum.to_list
-# [
-#   %OpenRegister.Country{iso: "nz", name: "New Zealand"},
-#   %OpenRegister.Country{iso: "gb", name: "United Kingdom"}
-# ]
-```
-
-Define a struct and return stream of structs created from a `csv` file stream,
-and a `namespace` string and `name` atom.
+Given a CSV file of data like this:
 
 ```sh
-(echo name,iso && echo New Zealand,nz && echo United Kingdom,gb) > tmp.csv
+(echo "name,iso-code" && echo New Zealand,nz && echo United Kingdom,gb) > tmp.csv
 ```
+
+Define a struct and return stream of structs created from a `csv` stream,
+a `namespace` string or atom, and a `name` string or atom.
 
 ```elixir
 File.stream!('./tmp.csv') \
-|> DataMorph.structs_from_csv("open-register", :iso_country) \
+|> DataMorph.structs_from_csv("my-module", :iso_country) \
 |> Enum.to_list
 # [
-#   %OpenRegister.IsoCountry{iso: "nz", name: "New Zealand"},
-#   %OpenRegister.IsoCountry{iso: "gb", name: "United Kingdom"}
+#   %MyModule.IsoCountry{iso_code: "nz", name: "New Zealand"},
+#   %MyModule.IsoCountry{iso_code: "gb", name: "United Kingdom"}
 # ]
 ```
 
-Define a struct and puts stream of structs created from a stream of `csv`
-on standard input, and a `namespace` atom, and `name` string.
-```sh
-(echo name,iso && echo New Zealand,NZ) | \
-    mix run -e 'IO.puts inspect \
-    IO.stream(:stdio, :line) \
-    |> DataMorph.structs_from_csv(:ex, "ample") \
-    |> Enum.at(0)'
-# %Ex.Ample{iso: "NZ", name: "New Zealand"}
+Return stream of maps created from a `csv` stream.
+
+```elixir
+File.stream!('./tmp.csv') \
+|> DataMorph.maps_from_csv() \
+|> Enum.to_list
+# [
+#   %{iso_code: "nz", name: "New Zealand"},
+#   %{iso_code: "gb", name: "United Kingdom"}
+# ]
 ```
 
-Add additional new fields to struct when called again with different `tsv`.
+Return a stream of keyword lists created from a stream of `csv`.
+
+```sh
+(echo name,iso && echo New Zealand,NZ) | \
+    mix run -e 'IO.stream(:stdio, :line) \
+    |> DataMorph.keyword_lists_from_csv() \
+    |> IO.inspect'
+# [[name: "New Zealand", iso: "NZ"]]
+```
+
+Add new fields to struct when called twice with different fields in `tsv`.
 
 ```elixir
 "name\tiso\n" <>
 "New Zealand\tnz\n" <>
 "United Kingdom\tgb" \
-|> DataMorph.structs_from_tsv(OpenRegister, "country") \
+|> DataMorph.structs_from_tsv(MyModule, "country") \
 |> Enum.to_list
+# [
+#   %MyModule.Country{iso: "nz", name: "New Zealand"},
+#   %MyModule.Country{iso: "gb", name: "United Kingdom"}
+# ]
 
 "name\tacronym\n" <>
 "New Zealand\tNZ\n" <>
 "United Kingdom\tUK" \
-|> DataMorph.structs_from_tsv(OpenRegister, "country") \
+|> DataMorph.structs_from_tsv("MyModule", :country) \
 |> Enum.to_list
+# warning: redefining module MyModule.Country
+#          (current version defined in memory)
 # [
-#   %OpenRegister.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
-#   %OpenRegister.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
+#   %MyModule.Country{acronym: "NZ", iso: nil, name: "New Zealand"},
+#   %MyModule.Country{acronym: "UK", iso: nil, name: "United Kingdom"}
 # ]
 ```
 
