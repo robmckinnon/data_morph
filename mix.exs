@@ -25,12 +25,12 @@ defmodule DataMorph.Mixfile do
 
   defp deps do
     [
-      {:csv, "~> 2.3"},
+      {:csv, "~> 2.3.1"},
       # Docs dependencies
-      {:ex_doc, "~> 0.19", only: :docs},
-      {:inch_ex, "~> 2.0", only: :docs},
+      {:ex_doc, "~> 0.21.1", only: :docs, runtime: false},
+      {:inch_ex, "~> 2.0", only: :docs, runtime: false},
       # Test dependencies
-      {:mix_test_watch, "~> 0.9", only: :dev}
+      {:mix_test_watch, "~> 0.9", only: :dev, runtime: false}
     ]
   end
 
