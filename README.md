@@ -14,14 +14,14 @@ You can view [full DataMorph API documentation on hexdocs](https://hexdocs.pm/da
 
 Add
 ```elixir
-{:data_morph, "~> 0.0.9"}
+{:data_morph, "~> 0.1.0"}
 ```
 to your deps in `mix.exs` like so:
 
 ```elixir
 defp deps do
   [
-    {:data_morph, "~> 0.0.9"}
+    {:data_morph, "~> 0.1.0"}
   ]
 end
 ```

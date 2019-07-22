@@ -1,13 +1,13 @@
 defmodule DataMorph.Mixfile do
   use Mix.Project
 
-  @version "0.0.9"
+  @version "0.1.0"
 
   def project do
     [
       app: :data_morph,
       version: @version,
-      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8",
+      elixir: "~> 1.3 or ~> 1.4 or ~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8 or ~> 1.9",
       description: description(),
       deps: deps(),
       package: package(),
