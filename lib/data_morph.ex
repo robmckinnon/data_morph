@@ -1,6 +1,14 @@
 defmodule DataMorph do
   @moduledoc ~S"""
-  Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV data.
+  Create Elixir structs, maps with atom keys, and keyword lists from CSV/TSV
+  data.
+
+  Note, we should never convert user input to atoms. This is because atoms are
+  not garbage collected. Once an atom is created, it is never reclaimed.
+
+  Generating atoms from user input would mean the user can inject enough
+  different names to exhaust our system memory, or we reach the Erlang VM limit
+  for the maximum number of atoms which will bring our system down regardless.
 
   ## Examples
 
